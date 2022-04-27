@@ -1,4 +1,4 @@
-import auth from "./firebase_config";
+import { auth } from "./firebase_config";
 import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { useState, useEffect } from "react";
 import Home from "./Home";

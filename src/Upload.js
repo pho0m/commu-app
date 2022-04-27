@@ -1,19 +1,28 @@
 import { useState } from "react";
 import { v4 } from "uuid";
+import Swal from "sweetalert2";
 
-import { storage } from "../firebase_config";
+import { storage } from "./firebase_config";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { ProgressBar } from "react-bootstrap";
 
 const Upload = (props) => {
   const [file2upload, setFile2Upload] = useState("");
   const [getUploadedFile, setGetUploadedFile] = useState("");
   const [progress, setProgress] = useState(0);
+
   const uploadFile = () => {
-    if (file2upload == null) return;
+    if (!file2upload) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
+      return;
+    }
 
     const pathname = "/images/"; // Set pathname as wanted.
-    const fileRef = ref(storage, pathname + v4() + file2upload.name);
-
+    const fileRef = ref(storage, pathname + v4() + "_" + file2upload.name);
     const uploadTask = uploadBytesResumable(fileRef, file2upload);
 
     uploadTask.on(
@@ -24,8 +33,11 @@ const Upload = (props) => {
         setProgress(Math.round(prog));
       },
       (err) => {
-        // if Error while uploading
-        window.alert(err);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err,
+        });
       },
       () => {
         // When the upload is done.
@@ -33,15 +45,31 @@ const Upload = (props) => {
           .then((url) => {
             document.getElementById("fileInput").value = "";
             setGetUploadedFile(url);
+            Swal.fire({
+              icon: "success",
+              title: "Upload is complete",
+              showConfirmButton: false,
+              timer: 1500,
+            });
           })
-          .catch((err) => window.alert(err));
+          .catch((err) =>
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err,
+            })
+          );
       }
     );
   };
+
   return (
     <div className="container">
       <h1 className="text-center bg-light text-secondary">Upload File</h1>
+      <br />
+      <ProgressBar animated now={progress} />
       <div>Progress: {progress}%</div>
+      <br />
       <input
         type="file"
         id="fileInput"
@@ -51,7 +79,11 @@ const Upload = (props) => {
       <hr />
       {getUploadedFile ? (
         <div>
-          <img src={getUploadedFile} alt="uploaded file" />
+          <img
+            src={getUploadedFile}
+            style={{ objectFit: "cover", width: "500px", height: "500px" }}
+            alt="uploaded file"
+          />
           <hr />
           <span>Link: </span>
           <a href={getUploadedFile} target="_blank">
@@ -59,7 +91,7 @@ const Upload = (props) => {
           </a>
         </div>
       ) : (
-        <div>No File</div>
+        <div>No File please click choose file</div>
       )}
     </div>
   );

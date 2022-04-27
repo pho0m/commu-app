@@ -19,8 +19,8 @@ const Header = (props) => {
 
   return (
     <div>
-      <h1 className="text-center bg-info text-white">
-        Firebase Authen with Google Account
+      <h1 className="text-center bg-info text-white bg-danger">
+        Firebase Upload with Google Account
       </h1>
       {props.user ? ( // user is logged in.
         <div className="d-flex justify-content-between bg-light">
