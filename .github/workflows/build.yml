@@ -52,9 +52,3 @@ jobs:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
-
-      - uses: sarisia/actions-status-discord@v1
-        if: always()
-        with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: "Release commu version ${{ steps.tag_version.outputs.new_tag }}"
