@@ -9,8 +9,12 @@ import Home from "./Home";
 import Topics from "./Topics";
 import Users from "./User";
 import SingleTopic from "./SingleTopic";
+
+//FIXME
 import CreateTopicsPage from "./CreateTopics";
 import CreateTopics from "./CreateTopics";
+
+import "./app.css";
 
 function App(props) {
   let navigate = useNavigate();
