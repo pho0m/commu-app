@@ -5,6 +5,7 @@ import { Box, Toolbar } from "@mui/material";
 import CommuAppBar from "../components/AppBar";
 import CommuDrawer from "../components/Drawer";
 import PageNotFound from "./PageNotFound";
+import Register from "./Register";
 import Home from "./Home";
 // import Topics from "./Topics";
 import Users from "./User";
@@ -58,6 +59,7 @@ function App(props) {
           <Route path="/" element={<Home />} />
           <Route path="home" element={<Home />} />
           <Route path="user" element={<Users />} />
+          <Route path="register" element={<Register />} />
           <Route path="topics" element={<SingleTopic />} />
           {/* <Route path="topics/:id" element={<SingleTopic />} /> */}
           <Route path="*" element={<PageNotFound />} />
