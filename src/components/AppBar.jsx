@@ -14,10 +14,12 @@ export default function CommuAppBar({ props }) {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
+        style={{ background: "transparent" }}
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${props.drawerWidth}px)` },
           ml: { sm: `${props.drawerWidth}px` },
+          boxShadow: "none",
         }}
       >
         <Toolbar>
@@ -30,7 +32,12 @@ export default function CommuAppBar({ props }) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ color: "black" }}
+          >
             My Appbar components
           </Typography>
         </Toolbar>

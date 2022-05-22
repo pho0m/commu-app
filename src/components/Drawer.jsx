@@ -26,6 +26,21 @@ const useStyles = makeStyles({
   selected: {},
 });
 
+const page = [
+  {
+    key: "home",
+    title: "Home",
+  },
+  {
+    key: "topics",
+    title: "Topic",
+  },
+  {
+    key: "user",
+    title: "User",
+  },
+];
+
 function CommuDrawer({ props }) {
   const classes = useStyles();
 
@@ -43,17 +58,17 @@ function CommuDrawer({ props }) {
         />
 
         <List>
-          {["Home", "Topics", "User"].map((text, index) => (
+          {page.map((value, index) => (
             <ListItem
-              key={text}
+              key={value.key}
               disablePadding
               classes={{ root: classes.root, selected: classes.selected }}
             >
               <ListItemButton
                 selected={props.selectedIndex === index}
-                onClick={(event) => props.handleListItemClick(event, index)}
+                onClick={(event) => props.handleListItemClick(index, value)}
               >
-                <ListItemText disableTypography primary={text} />
+                <ListItemText disableTypography primary={value.title} />
               </ListItemButton>
             </ListItem>
           ))}
