@@ -8,9 +8,11 @@ import PageNotFound from "./PageNotFound";
 import Home from "./Home";
 import Topics from "./Topics";
 import Users from "./User";
+import UserEdit from "./UserEdit";
 import SingleTopic from "./SingleTopic";
 import CreateTopicsPage from "./CreateTopics";
 import CreateTopics from "./CreateTopics";
+import AllTopics from "./AllTopics";
 
 function App(props) {
   let navigate = useNavigate();
@@ -60,9 +62,11 @@ function App(props) {
           <Route path="/" element={<Home />} />
           <Route path="home" element={<Home />} />
           <Route path="user" element={<Users />} />
+          <Route path="testuser" element={<UserEdit />} />
           <Route path="topics" element={<Topics />} />
           <Route path="topics/:id" element={<SingleTopic />} />
           <Route path="create" element={<CreateTopics />} />
+          <Route path="alltopics" element={<AllTopics />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Box>
