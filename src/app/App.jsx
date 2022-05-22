@@ -15,9 +15,8 @@ import CreateTopicsPage from "./CreateTopics";
 import CreateTopics from "./CreateTopics";
 import AllTopics from "./AllTopics";
 
-
 import "./app.css";
-
+import Topics from "./Topics";
 
 function App(props) {
   let navigate = useNavigate();
@@ -69,7 +68,7 @@ function App(props) {
           <Route path="/" element={<Home />} />
           <Route path="home" element={<Home />} />
           <Route path="user" element={<Users />} />
-          <Route path="testuser" element={<UserEdit />} />
+          <Route path="user/edit" element={<UserEdit />} />
 
           <Route path="topics" element={<Topics />} />
           <Route path="topics/:id" element={<SingleTopic />} />

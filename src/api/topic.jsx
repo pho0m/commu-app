@@ -3,14 +3,14 @@ import axios from "axios";
 function getAllTopics() {
   return axios({
     method: "GET",
-    url: "http://localhost:3001/api/topics",
+    url: "https://commu-core.kiattiphoompoon.repl.co/api/topics",
   });
 }
 
 function getSingleTopic(props) {
   return axios({
     method: "GET",
-    url: `http://localhost:3001/api/topic`,
+    url: `https://commu-core.kiattiphoompoon.repl.co/api/topic`,
     params: props,
   });
 }
@@ -23,7 +23,7 @@ function createTopic(props, token) {
   return axios({
     method: "POST",
     headers,
-    url: `http://localhost:3001/api/topic/create`,
+    url: `https://commu-core.kiattiphoompoon.repl.co/api/create`,
     data: props,
   });
 }

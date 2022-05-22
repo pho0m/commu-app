@@ -71,7 +71,7 @@ export default function Home() {
   };
 
   if (tp.loading) {
-    return <></>; //for loading
+    return <>Loading</>; //for loading
   }
 
   return (
