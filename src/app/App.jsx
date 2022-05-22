@@ -6,7 +6,7 @@ import CommuAppBar from "../components/AppBar";
 import CommuDrawer from "../components/Drawer";
 import PageNotFound from "./PageNotFound";
 import Home from "./Home";
-import Topics from "./Topics";
+// import Topics from "./Topics";
 import Users from "./User";
 import SingleTopic from "./SingleTopic";
 
@@ -62,8 +62,14 @@ function App(props) {
           <Route path="/" element={<Home />} />
           <Route path="home" element={<Home />} />
           <Route path="user" element={<Users />} />
+
           <Route path="topics" element={<Topics />} />
           <Route path="topics/:id" element={<SingleTopic />} />
+
+          <Route path="topics" element={<SingleTopic />} />
+          {/* <Route path="topics/:id" element={<SingleTopic />} /> */}
+          <Route path="create" element={<CreateTopics />} />
+
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Box>
