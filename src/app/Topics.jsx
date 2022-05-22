@@ -1,5 +1,4 @@
 import { Box, Typography, TextField, Button } from "@material-ui/core";
-import axios from "axios";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { useNavigate } from "react-router";
