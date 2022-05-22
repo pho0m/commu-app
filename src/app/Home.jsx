@@ -1,9 +1,17 @@
 import * as React from "react";
 import { useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import MobileStepper from "@mui/material/MobileStepper";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
+import {
+  Box,
+  Paper,
+  Typography,
+  Button,
+  MobileStepper,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActionArea,
+  Grid,
+} from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import SwipeableViews from "react-swipeable-views";
@@ -29,7 +37,50 @@ const images = [
   },
 ];
 
-function Home() {
+const placeholder =
+  "https://media.discordapp.net/attachments/977819986217304134/977820013203423232/Blue_Banner_Birthday_Party_Invitation_1.png?width=1352&height=676";
+
+const topicsItem = [
+  {
+    id: 1,
+    title: "first",
+    imgPath: placeholder,
+    subTitle:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+  },
+  {
+    id: 2,
+    title: "second",
+    imgPath: placeholder,
+    subTitle: "second mockup test data",
+  },
+  {
+    id: 3,
+    title: "third",
+    imgPath: placeholder,
+    subTitle: "third mockup test data",
+  },
+  {
+    id: 4,
+    title: "forth",
+    imgPath: placeholder,
+    subTitle: "forth mockup test data",
+  },
+  {
+    id: 5,
+    title: "five",
+    imgPath: placeholder,
+    subTitle: "five mockup test data",
+  },
+  {
+    id: 6,
+    title: "six",
+    imgPath: placeholder,
+    subTitle: "six mockup test data",
+  },
+];
+
+export default function Home() {
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = images.length;
@@ -112,8 +163,55 @@ function Home() {
           </Button>
         }
       />
+
+      <Box sx={{ flexDirection: "row", pt: 2 }}>
+        <Typography variant="h4" component="h2">
+          Topics <Button variant="contained">See more</Button>
+        </Typography>
+      </Box>
+
+      <Box sx={{ flexDirection: "row", pt: 3 }}>
+        <Grid item xs={12}>
+          <Grid
+            container
+            justifyContent="start"
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 4, sm: 8, md: 12 }}
+          >
+            {topicsItem.map((value) => (
+              <Grid key={value.id} item>
+                <Card sx={{ width: 410, boxShadow: 3 }}>
+                  <CardActionArea>
+                    <CardMedia
+                      component="img"
+                      height="140"
+                      image={value.imgPath}
+                      alt={value.title}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {value.title}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          display: "-webkit-box",
+                          overflow: "hidden",
+                          WebkitBoxOrient: "vertical",
+                          WebkitLineClamp: 4,
+                        }}
+                        variant="body2"
+                        color="text.secondary"
+                      >
+                        {value.subTitle}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
+      </Box>
     </Box>
   );
 }
-
-export default Home;

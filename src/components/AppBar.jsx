@@ -33,7 +33,7 @@ export default function CommuAppBar({ props }) {
             <MenuIcon />
           </IconButton>
           <Typography
-            variant="h6"
+            variant="h4"
             noWrap
             component="div"
             sx={{ color: "black" }}
