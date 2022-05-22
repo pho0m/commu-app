@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 import { Box, Toolbar } from "@mui/material";
 import CommuAppBar from "../components/AppBar";
@@ -10,28 +10,26 @@ import Topics from "./Topics";
 import Users from "./User";
 import SingleTopic from "./SingleTopic";
 
-//FIXME
-import CreateTopicsPage from "./CreateTopics";
-import CreateTopics from "./CreateTopics";
-
 import "./app.css";
 
 function App(props) {
   let navigate = useNavigate();
+  const location = useLocation();
+  let path = location.pathname;
 
   const drawerWidth = 140;
   const { window } = props;
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedPath, setSelectedIndex] = React.useState(path);
   const [title, setTitle] = React.useState("Home");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleListItemClick = (index, value) => {
-    setSelectedIndex(index);
+  const handleListItemClick = (value) => {
+    setSelectedIndex(`/${value.key}`);
     setTitle(value.title);
 
     navigate(`/${value.key}`);
@@ -46,7 +44,7 @@ function App(props) {
           handleDrawerToggle,
           window,
           drawerWidth,
-          selectedIndex,
+          selectedPath,
           handleListItemClick,
         }}
       />
@@ -66,7 +64,6 @@ function App(props) {
           <Route path="user" element={<Users />} />
           <Route path="topics" element={<Topics />} />
           <Route path="topics/:id" element={<SingleTopic />} />
-          <Route path="create" element={<CreateTopics />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Box>

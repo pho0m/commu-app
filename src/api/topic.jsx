@@ -15,7 +15,21 @@ function getSingleTopic(props) {
   });
 }
 
+function createTopic(props, token) {
+  const headers = {
+    authorization: `${token}`,
+  };
+
+  return axios({
+    method: "POST",
+    headers,
+    url: `http://localhost:3001/api/topic/create`,
+    data: props,
+  });
+}
+
 export const topics = {
   getAllTopics,
   getSingleTopic,
+  createTopic,
 };
