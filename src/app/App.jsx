@@ -11,20 +11,22 @@ import Users from "./User";
 import SingleTopic from "./SingleTopic";
 
 function App(props) {
+  let navigate = useNavigate();
+
   const drawerWidth = 140;
   const { window } = props;
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [title, setTitle] = React.useState("Home");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  let navigate = useNavigate();
-
   const handleListItemClick = (index, value) => {
     setSelectedIndex(index);
+    setTitle(value.title);
 
     navigate(`/${value.key}`);
   };
@@ -32,7 +34,7 @@ function App(props) {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <CommuAppBar props={{ drawerWidth, handleDrawerToggle }} />
+      <CommuAppBar props={{ drawerWidth, handleDrawerToggle, title }} />
       <CommuDrawer
         props={{
           mobileOpen,
@@ -55,7 +57,7 @@ function App(props) {
         <Toolbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="home" element={<Home />} />
           <Route path="user" element={<Users />} />
           <Route path="topics" element={<Topics />} />
           <Route path="topics/:id" element={<SingleTopic />} />

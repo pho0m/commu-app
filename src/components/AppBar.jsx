@@ -38,7 +38,7 @@ export default function CommuAppBar({ props }) {
             component="div"
             sx={{ color: "black" }}
           >
-            My Appbar components
+            {props.title}
           </Typography>
         </Toolbar>
       </AppBar>
