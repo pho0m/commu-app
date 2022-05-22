@@ -143,7 +143,10 @@ export default function Home() {
 
       <Box sx={{ flexDirection: "row", pt: 2 }}>
         <Typography variant="h4" component="h2">
-          Topics <Button variant="contained">See more</Button>
+          Topics{" "}
+          <Button variant="contained" onClick={() => {}}>
+            See more
+          </Button>
         </Typography>
       </Box>
 
