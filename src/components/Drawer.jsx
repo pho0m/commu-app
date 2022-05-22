@@ -14,8 +14,8 @@ const useStyles = makeStyles({
   root: {
     color: "white",
     "&$selected": {
-      backgroundColor: "red",
-      color: "white",
+      backgroundColor: "white",
+      color: "black",
     },
     "&:hover": {
       backgroundColor: "white",
@@ -100,6 +100,7 @@ function CommuDrawer({ props }) {
           display: { xs: "block", sm: "none" },
           "& .MuiDrawer-paper": {
             width: props.drawerWidth,
+            backgroundColor: "black",
           },
         }}
       >

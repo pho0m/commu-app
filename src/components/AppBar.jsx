@@ -14,7 +14,7 @@ export default function CommuAppBar({ props }) {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
-        style={{ background: "transparent" }}
+        style={{ background: "black" }}
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${props.drawerWidth}px)` },
@@ -36,7 +36,7 @@ export default function CommuAppBar({ props }) {
             variant="h4"
             noWrap
             component="div"
-            sx={{ color: "black" }}
+            sx={{ color: "white" }}
           >
             {props.title}
           </Typography>

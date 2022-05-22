@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
-import { Box, CssBaseline, Toolbar } from "@mui/material";
+import { Box, Toolbar } from "@mui/material";
 import CommuAppBar from "../components/AppBar";
 import CommuDrawer from "../components/Drawer";
 import PageNotFound from "./PageNotFound";
@@ -33,7 +33,6 @@ function App(props) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <CssBaseline />
       <CommuAppBar props={{ drawerWidth, handleDrawerToggle, title }} />
       <CommuDrawer
         props={{

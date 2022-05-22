@@ -18,6 +18,8 @@ import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+const placeholder =
+  "https://media.discordapp.net/attachments/977819986217304134/977820013203423232/Blue_Banner_Birthday_Party_Invitation_1.png?width=1352&height=676";
 
 const images = [
   {
@@ -36,9 +38,6 @@ const images = [
       "https://media.discordapp.net/attachments/900736408325615667/977585276379627550/3_1.png?width=1352&height=676",
   },
 ];
-
-const placeholder =
-  "https://media.discordapp.net/attachments/977819986217304134/977820013203423232/Blue_Banner_Birthday_Party_Invitation_1.png?width=1352&height=676";
 
 const topicsItem = [
   {
