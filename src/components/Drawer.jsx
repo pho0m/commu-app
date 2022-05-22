@@ -64,8 +64,8 @@ function CommuDrawer({ props }) {
               classes={{ root: classes.root, selected: classes.selected }}
             >
               <ListItemButton
-                selected={props.selectedIndex === index}
-                onClick={(event) => props.handleListItemClick(index, value)}
+                selected={props.selectedPath === `/${value.key}`}
+                onClick={(event) => props.handleListItemClick(value)}
               >
                 <ListItemText disableTypography primary={value.title} />
               </ListItemButton>
