@@ -18,6 +18,7 @@ export default function CreateTopic() {
   const [file2upload, setFile2Upload] = React.useState("");
   const [fileRef, setfileRef] = React.useState("");
   const [progress, setProgress] = React.useState(0);
+  const [getUploadedFile, setGetUploadedFile] = React.useState();
 
   const topicCollection = collection(db, "/topics");
   let navigate = useNavigate();

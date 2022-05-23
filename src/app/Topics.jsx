@@ -20,9 +20,6 @@ import { collection, getDocs } from "firebase/firestore";
 import Swal from "sweetalert2";
 import { db } from "./firebase_config";
 
-const placeholder =
-  "https://media.discordapp.net/attachments/977819986217304134/977820013203423232/Blue_Banner_Birthday_Party_Invitation_1.png?width=1352&height=676";
-
 export default function Topics() {
   const [loading, setLoading] = React.useState(false);
   const topicCollection = collection(db, "/topics");

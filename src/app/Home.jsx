@@ -26,7 +26,7 @@ const images = [
   {
     label: "first",
     imgPath:
-      "https://media.discordapp.net/attachments/900736408325615667/977585190736130148/1_1.png?width=1352&height=676",
+      "https://media.discordapp.net/attachments/977819986217304134/978265703725555782/2.png?width=2200&height=676",
   },
   {
     label: "second",

@@ -202,7 +202,7 @@ export default function Topic() {
             alt="user-image"
             src={topicState.avatar}
             style={{ height: "30px" }}
-          ></img>
+          />
           <Typography sx={{ paddingLeft: 2 }}>
             {topicState.displayname}
           </Typography>
@@ -243,7 +243,7 @@ export default function Topic() {
             alt="usersmallpic"
             src={imgLink}
             style={{ height: "60px", paddingTop: "10px" }}
-          ></img>
+          />
           <TextField
             fullWidth
             sx={{ m: 1 }}
@@ -301,7 +301,7 @@ export default function Topic() {
             </Grid>
           </Paper>
         ))}
-      </Box>{" "}
+      </Box>
     </>
   );
 }

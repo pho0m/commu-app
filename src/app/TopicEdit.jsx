@@ -260,7 +260,7 @@ export default function TopicEdit() {
             alt="user-image"
             src={topicState.avatar}
             style={{ height: "30px" }}
-          ></img>
+          />
           <Typography sx={{ paddingLeft: 2 }}>
             {topicState.displayname}
           </Typography>
@@ -334,7 +334,7 @@ export default function TopicEdit() {
               alt="usersmallpic"
               src={imgLink}
               style={{ height: "60px", paddingTop: "10px" }}
-            ></img>
+            />
             <TextField
               fullWidth
               sx={{ m: 1 }}

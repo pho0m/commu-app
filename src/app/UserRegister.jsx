@@ -16,13 +16,8 @@ import { useNavigate } from "react-router";
 
 function Copyright(props) {
   return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright Pho0m © "}
+    <Typography variant="body2" align="center" {...props}>
+      {"Copyright TCT-R31 © "}
       {new Date().getFullYear()}
       {"."}
     </Typography>

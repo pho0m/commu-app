@@ -22,13 +22,8 @@ import { useNavigate } from "react-router";
 
 function Copyright(props) {
   return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright Pho0m © "}
+    <Typography variant="body2" align="center" {...props}>
+      {"Copyright TCT-R31 © "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
@@ -37,17 +32,18 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function UserLogin() {
+export default function UserLogin(props) {
   let navigate = useNavigate();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
+  console.log(props);
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   const data = new FormData(event.currentTarget);
+  //   console.log({
+  //     email: data.get("email"),
+  //     password: data.get("password"),
+  //   });
+  // };
 
   return (
     <ThemeProvider theme={theme}>
@@ -65,12 +61,12 @@ export default function UserLogin() {
             margin: "10px",
           }}
         >
-          <Typography component="h1" variant="h5">
-            Log in Commu
+          <Typography component="h1" variant="h4">
+            Welcome to Commu App
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            // onSubmit={}
             noValidate
             sx={{ mt: 10 }}
           >
@@ -120,13 +116,13 @@ export default function UserLogin() {
             </Grid>
           </Box>
           <br />
-          <FacebookLoginButton
+          <GoogleLoginButton
             iconSize="20px"
             style={{ fontSize: "15px" }}
             align="center"
-            onClick={() => alert("Hello")}
+            onClick={props.login}
           />
-          <GoogleLoginButton
+          <FacebookLoginButton
             iconSize="20px"
             style={{ fontSize: "15px" }}
             align="center"

@@ -1,7 +1,9 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import * as React from "react";
 
-export default function UserProfile() {
+export default function UserProfile(props) {
+  console.log(props);
+
   return (
     <Box
       style={{ display: "flex", justifyContent: "center", paddingTop: "5vh" }}
@@ -58,6 +60,7 @@ export default function UserProfile() {
             <Typography>Edit</Typography>
           </Button>
           <Button
+            onClick={props.logout}
             style={{ width: "20%", backgroundColor: "#E12929", color: "white" }}
           >
             <Typography>Logout</Typography>
