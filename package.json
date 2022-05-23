@@ -17,6 +17,7 @@
     "axios": "^0.27.2",
     "firebase": "^9.6.11",
     "material-ui-dropzone": "^3.5.0",
+    "pusher-js": "^7.1.0-beta",
     "react": "^18.0.0",
     "react-avatar": "^4.1.0",
     "react-dom": "^18.0.0",
