@@ -13,27 +13,30 @@ import SendIcon from "@mui/icons-material/Send";
 import { useAsync, useLocation } from "react-use";
 import { useNavigate } from "react-router";
 
+import axios from "axios";
+import Pusher from "pusher-js";
+
 const imgLink =
   "https://media.discordapp.net/attachments/935973325707030568/977873476377526272/user.png";
 
-const userComment = [
-  {
-    id: 1,
-    user: "Phoom",
-    imgPath: imgLink,
-    timestm: "3",
-    CommentDetail:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean luctus ut est sed faucibus. Duis bibendum ac ex vehicula laoreet. Suspendisse congue vulputate lobortis. Pellentesque at interdum tortor. Quisque arcu quam, malesuada vel mauris et, posuere sagittis ipsum. Aliquam ultricies a ligula nec faucibus. In elit metus, efficitur lobortis nisi quis, molestie porttitor metus. Pellentesque et neque risus. Aliquam vulputate, mauris vitae tincidunt interdum, mauris mi vehicula urna, nec feugiat quam lectus vitae ex.",
-  },
-  {
-    id: 2,
-    user: "Phoom",
-    imgPath: imgLink,
-    timestm: "20",
-    CommentDetail:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean luctus ut est sed faucibus. Duis bibendum ac ex vehicula laoreet. Suspendisse congue vulputate lobortis.",
-  },
-];
+// const userComment = [
+//   {
+//     id: 1,
+//     user: "Phoom",
+//     imgPath: imgLink,
+//     timestm: "3",
+//     CommentDetail:
+//       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean luctus ut est sed faucibus. Duis bibendum ac ex vehicula laoreet. Suspendisse congue vulputate lobortis. Pellentesque at interdum tortor. Quisque arcu quam, malesuada vel mauris et, posuere sagittis ipsum. Aliquam ultricies a ligula nec faucibus. In elit metus, efficitur lobortis nisi quis, molestie porttitor metus. Pellentesque et neque risus. Aliquam vulputate, mauris vitae tincidunt interdum, mauris mi vehicula urna, nec feugiat quam lectus vitae ex.",
+//   },
+//   {
+//     id: 2,
+//     user: "Phoom",
+//     imgPath: imgLink,
+//     timestm: "20",
+//     CommentDetail:
+//       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean luctus ut est sed faucibus. Duis bibendum ac ex vehicula laoreet. Suspendisse congue vulputate lobortis.",
+//   },
+// ];
 
 const useStyles = makeStyles({
   row: {
@@ -73,7 +76,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Topic() {
+export default function Topic(props) {
   let navigate = useNavigate();
 
   const location = useLocation();
@@ -84,8 +87,55 @@ export default function Topic() {
   const classes = useStyles();
   const topicCollection = collection(db, "/topics");
   const targetDoc = doc(topicCollection, id);
+  const [values, setValues] = React.useState({});
 
   const [topicState, setTopicState] = React.useState({});
+  const [userComment, setUserComment] = React.useState({});
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    const output = values;
+    output[name] = value;
+
+    setValues(output);
+  };
+
+  const handleSubmit = (e) => {
+    const payload = {
+      username: props.user.displayName,
+      message: values,
+    };
+
+    axios({
+      method: "POST",
+      url: "https://commu-core.kiattiphoompoon.repl.co/api/ping",
+      data: payload,
+    });
+  };
+
+  React.useEffect(() => {
+    const pusher = new Pusher({
+      appId: process.env.PUSHER_APP_ID,
+      key: process.env.PUSHER_KEY,
+      secret: process.env.PUSHER_SECRET,
+      cluster: process.env.PUSHER_CLUSTER,
+      useTLS: true,
+    });
+
+    const channel = pusher.subscribe("commu-app-channel");
+
+    channel.bind("commu-app-event", function (data) {
+      const { message } = data;
+      setUserComment((prevState) => [...prevState, { message }]);
+    });
+
+    console.log(userComment);
+
+    return () => {
+      pusher.unsubscribe("commu-app-channel");
+    };
+  }, []);
 
   const handleEdit = () => {
     navigate(`edit`);
@@ -243,13 +293,17 @@ export default function Topic() {
           <TextField
             fullWidth
             sx={{ m: 1 }}
+            value={values.comment}
+            onInput={(e) => handleChange(e)}
             id="filled-textarea"
-            label="Multiline Placeholder"
-            placeholder="Placeholder"
+            name="comment"
+            label="Comment Here"
+            placeholder="Yeah ! it's great !!"
             multiline
             variant="filled"
           />
           <Button
+            onClick={handleSubmit}
             className={classes.sendButton}
             style={{ color: "white", backgroundColor: "#92B4EC" }}
             // onClick={this.handleSend}
@@ -257,6 +311,7 @@ export default function Topic() {
             <SendIcon />
           </Button>
         </Box>
+
         <Box
           sx={{
             width: "auto",
@@ -275,6 +330,7 @@ export default function Topic() {
             </Box>
           </Box>
         </Box>
+        {/* {FIXME PUSHER} */}
         {userComment.map((value) => (
           <Paper style={{ padding: "40px 20px" }}>
             <Grid key={value.id} item container wrap="nowrap" spacing={2}>

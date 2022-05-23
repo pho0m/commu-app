@@ -29,6 +29,7 @@
     "react-social-login-buttons": "^3.6.0",
     "react-swipeable-views": "^0.14.0",
     "react-use": "^17.4.0",
+    "redux": "^4.2.0",
     "sweetalert2": "^11.4.8",
     "web-vitals": "^2.1.0"
   },

@@ -37,6 +37,7 @@ import {
 } from "firebase/firestore"; //
 import { db } from "./firebase_config";
 import Swal from "sweetalert2";
+import { loadState, saveState } from "../components/LocalStorage";
 
 function App(props) {
   let navigate = useNavigate();
@@ -50,6 +51,15 @@ function App(props) {
   const [selectedPath, setSelectedIndex] = React.useState(path);
   const [title, setTitle] = React.useState("Home");
   const [userInfo, setUserInfo] = React.useState();
+
+  // () => {
+  //   // getting stored value
+  //   const saved = localStorage.getItem("user");
+  //   const initialValue = JSON.parse(saved);
+
+  //   console.log(initialValue);
+  //   return initialValue || "";
+  // };
   const [id, setID] = React.useState();
   const userCollection = collection(db, "/users");
 
@@ -64,18 +74,40 @@ function App(props) {
         setUserInfo(null);
       }
     });
-
-    // if (userInfo === undefined || userInfo === null) {
-    //   auth.onAuthStateChanged((user) => {
-    //     if (user == null) {
-    //       console.log("in if");
-    //     } else {
-    //       navigate("/user/login");
-    //       console.log("in else");
-    //     }
-    //   });
-    // }
   }, []);
+
+  // React.useEffect(() => {
+  //   if (userInfo === null || userInfo === undefined || userInfo === "") {
+  //     navigate("/user/login");
+  //   } else {
+  //     auth.onAuthStateChanged((user) => {
+  //       if (user) {
+  //         // User is logged in
+  //         //console.log("onAuth", user);
+
+  //         (async () => {
+  //           const q = query(userCollection, where("email", "==", user.email));
+  //           const querySnapshot = await getDocs(q);
+  //           let arr = [];
+
+  //           querySnapshot.forEach((doc) => {
+  //             arr.push(doc.data());
+  //           });
+
+  //           let qData = arr[0];
+
+  //           localStorage.setItem("user", JSON.stringify(qData));
+
+  //           setUserInfo(qData);
+  //         })();
+  //       } else {
+  //         //  User is not logged in
+  //         localStorage.setItem("user", null);
+  //         setUserInfo(null);
+  //       }
+  //     });
+  //   }
+  // }, []);
 
   const handleLoginWithFacebook = () => {
     const provider = new FacebookAuthProvider();
@@ -89,8 +121,6 @@ function App(props) {
       const credential = FacebookAuthProvider.credentialFromResult(result);
       const accessToken = credential.accessToken;
 
-      console.log(usr);
-
       console.log(accessToken);
       (async () => {
         const q = query(userCollection, where("email", "==", usr.email));
@@ -102,8 +132,6 @@ function App(props) {
         });
 
         let qData = arr[0];
-
-        console.log(qData);
 
         if (qData === undefined || qData === null) {
           let userData = {
@@ -124,8 +152,6 @@ function App(props) {
               });
             });
         } else {
-          console.log("in else");
-
           setUserInfo(qData);
         }
       })();
@@ -236,33 +262,82 @@ function App(props) {
       >
         <Toolbar />
         <Routes>
-          <Route
-            path="/user/login"
-            element={
-              <UserLogin
-                loginGoogle={handleLoginWithGoogle}
-                loginFB={handleLoginWithFacebook}
-                props={{}}
+          {userInfo === undefined || userInfo === null || userInfo === "" ? (
+            <Route
+              path="/user/login"
+              element={
+                <UserLogin
+                  loginGoogle={handleLoginWithGoogle}
+                  loginFB={handleLoginWithFacebook}
+                  props={{}}
+                />
+              }
+            />
+          ) : (
+            <>
+              <Route path="/" element={<Home user={userInfo} />} />
+              <Route path="home" element={<Home user={userInfo} />} />
+              <Route
+                path="user"
+                element={<UserProfile logout={handleLogout} user={userInfo} />}
               />
-            }
-          />
-
-          <Route path="/" element={<Home />} />
-          <Route path="home" element={<Home />} />
-          <Route
-            path="user"
-            element={<UserProfile logout={handleLogout} user={userInfo} />}
-          />
-
-          {/* <Route path="user/register" element={<UserRegister />} /> */}
-          <Route path="user/edit" element={<UserEdit />} />
-          <Route path="topics" element={<CreateTopic user={userInfo} />} />
-          <Route path="topics/:id" element={<Topic />} />
-          <Route path="topics/:id/edit" element={<TopicEdit />} />
-          <Route path="topics/all" element={<Topics />} />
+              {/* <Route path="user/register" element={<UserRegister />} /> */}
+              <Route path="user/edit" element={<UserEdit user={userInfo} />} />
+              <Route path="topics" element={<CreateTopic user={userInfo} />} />
+              <Route path="topics/:id" element={<Topic user={userInfo} />} />
+              <Route
+                path="topics/:id/edit"
+                element={<TopicEdit user={userInfo} />}
+              />
+              <Route path="topics/all" element={<Topics user={userInfo} />} />
+            </>
+          )}
 
           <Route path="*" element={<PageNotFound />} />
         </Routes>
+        {/* <Routes>
+          {userInfo === null || userInfo === undefined ? (
+            <>
+              <Route
+                path="/user/login"
+                element={
+                  <UserLogin
+                    loginGoogle={handleLoginWithGoogle}
+                    loginFB={handleLoginWithFacebook}
+                    props={{}}
+                  />
+                }
+              />
+              <Route
+                path="/"
+                element={
+                  <UserLogin
+                    loginGoogle={handleLoginWithGoogle}
+                    loginFB={handleLoginWithFacebook}
+                    props={{}}
+                  />
+                }
+              />
+            </>
+          ) : (
+            <>
+              <Route path="/" element={<Home />} />
+              <Route path="home" element={<Home />} />
+              <Route
+                path="user"
+                element={<UserProfile logout={handleLogout} user={userInfo} />}
+              />
+              <Route path="user/edit" element={<UserEdit />} /> */}
+        {/* <Route path="user/register" element={<UserRegister />} /> */}
+        {/* <Route path="topics" element={<CreateTopic user={userInfo} />} />
+              <Route path="topics/:id" element={<Topic />} />
+              <Route path="topics/:id/edit" element={<TopicEdit />} />
+              <Route path="topics/all" element={<Topics />} />
+            </>
+          )}
+
+          <Route path="*" element={<PageNotFound />} />
+        </Routes> */}
       </Box>
     </Box>
   );

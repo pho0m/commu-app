@@ -2,8 +2,8 @@ import * as React from "react";
 
 import { Box, Typography, TextField, Button } from "@material-ui/core";
 import { useNavigate } from "react-router";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "./firebase_config";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { auth, db } from "./firebase_config";
 import Swal from "sweetalert2";
 import { storage } from "./firebase_config";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -20,26 +20,10 @@ export default function CreateTopic(props) {
   const [file2upload, setFile2Upload] = React.useState("");
   const [fileRef, setfileRef] = React.useState("");
   const [progress, setProgress] = React.useState(0);
-  const [getUploadedFile, setGetUploadedFile] = React.useState();
 
   const topicCollection = collection(db, "/topics");
+
   let navigate = useNavigate();
-
-  const tp = useAsync(async () => {
-    setLoading(true);
-    if (props.user === undefined || props.user === null) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "unauthorized please login",
-      });
-      navigate("/user/login");
-    }
-  }, []);
-
-  if (tp.loading) {
-    return <>Loading</>; //for loading
-  }
 
   const handleUploadImage = (files) => {
     const pathname = "/images/";
@@ -155,7 +139,7 @@ export default function CreateTopic(props) {
             alt="userimg"
             size={100}
             round={true}
-            src={props.user.avatar}
+            src={props.user.avatar || props.user.photoURL}
           />
           <Box
             style={{

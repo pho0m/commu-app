@@ -9,6 +9,10 @@ export default function UserProfile(props) {
   const [loading, setLoading] = React.useState(false);
   let navigate = useNavigate();
 
+  const handleEdit = () => {
+    navigate("/user/edit");
+  };
+
   const tp = useAsync(async () => {
     setLoading(true);
     if (props.user === undefined || props.user === null) {
@@ -38,7 +42,12 @@ export default function UserProfile(props) {
           padding: "5vh",
         }}
       >
-        <Avatar alt="userimg" size={150} round={true} src={props.user.avatar} />
+        <Avatar
+          alt="userimg"
+          size={150}
+          round={true}
+          src={props.user.avatar || props.user.photoURL}
+        />
         <br />
 
         <Typography style={{ marginBottom: "1vh" }}>
@@ -60,7 +69,8 @@ export default function UserProfile(props) {
             justifyContent: "end",
           }}
         >
-          <Button
+          {/* <Button
+            onClick={handleEdit}
             style={{
               width: "20%",
               backgroundColor: "#9BD2F0",
@@ -69,7 +79,7 @@ export default function UserProfile(props) {
             }}
           >
             <Typography>Edit</Typography>
-          </Button>
+          </Button> */}
           <Button
             onClick={props.logout}
             style={{ width: "20%", backgroundColor: "#E12929", color: "white" }}

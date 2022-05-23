@@ -25,7 +25,7 @@ const images = [
   {
     label: "first",
     imgPath:
-      "https://media.discordapp.net/attachments/977819986217304134/978265703725555782/2.png?width=2200&height=676",
+      "https://cdn.discordapp.com/attachments/977819986217304134/978337980932575262/1.jpg",
   },
   {
     label: "second",
@@ -39,7 +39,7 @@ const images = [
   },
 ];
 
-export default function Home() {
+export default function Home(porps) {
   let navigate = useNavigate();
 
   const theme = useTheme();
@@ -115,7 +115,7 @@ export default function Home() {
                 sx={{
                   display: "block",
                   width: "100%",
-                  objectFit: "contain",
+                  objectFit: "cover",
                   height: 500,
                 }}
                 src={step.imgPath}

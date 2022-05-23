@@ -1,14 +1,19 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import * as React from "react";
+import Avatar from "react-avatar";
+import { useNavigate } from "react-router";
+import { useAsync } from "react-use";
+import Swal from "sweetalert2";
 
-export default function UserEdit() {
+export default function UserEdit(props) {
+  const [loading, setLoading] = React.useState(false);
+  let navigate = useNavigate();
+
+  const handleEdit = () => {};
+
   return (
     <Box
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        paddingTop: "5vh",
-      }}
+      style={{ display: "flex", justifyContent: "center", paddingTop: "5vh" }}
     >
       <Box
         style={{
@@ -19,17 +24,11 @@ export default function UserEdit() {
           padding: "5vh",
         }}
       >
-        <Box
-          style={{
-            borderRadius: "50%",
-            width: "150px",
-            height: "150px",
-            backgroundColor: "grey",
-            marginBottom: "3vh",
-          }}
-        />
+        <Avatar alt="userimg" size={150} round={true} src={props.user.avatar} />
+        <br />
+
         <Typography style={{ marginBottom: "1vh" }}>
-          <h3>Pho0m</h3>
+          {props.user.displayName}
         </Typography>
         <Box
           style={{
@@ -39,17 +38,12 @@ export default function UserEdit() {
           }}
         ></Box>
         <Typography style={{ marginBottom: "4vh" }}>
-          Email: pho0m@commumail.com
-        </Typography>
-        <Typography style={{ marginBottom: "4vh" }}>
-          With: commu account
-        </Typography>
-        <Typography style={{ marginBottom: "4vh" }}>
-          Create At: 21/05/2022
+          Email: {props.user.email}
         </Typography>
         <Box
           style={{
             display: "flex",
+            justifyContent: "end",
           }}
         >
           <Button
@@ -63,6 +57,7 @@ export default function UserEdit() {
             <Typography>Edit</Typography>
           </Button>
           <Button
+            onClick={props.logout}
             style={{ width: "20%", backgroundColor: "#E12929", color: "white" }}
           >
             <Typography>Logout</Typography>
