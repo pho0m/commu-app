@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useNavigate } from "react-router";
 
 function Copyright(props) {
   return (
@@ -21,7 +22,7 @@ function Copyright(props) {
       align="center"
       {...props}
     >
-      {"Copyright © "}
+      {"Copyright Pho0m © "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
@@ -30,7 +31,9 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function Register() {
+export default function UserRegister() {
+  let navigate = useNavigate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -120,9 +123,15 @@ export default function Register() {
             </Button>
             <Grid container justifyContent="flex-start">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Button
+                  style={{ color: "blue" }}
+                  onClick={() => {
+                    navigate(`/user`);
+                  }}
+                  variant="body2"
+                >
                   Already have an account? Sign in
-                </Link>
+                </Button>
               </Grid>
             </Grid>
           </Box>

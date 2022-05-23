@@ -14,6 +14,12 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
+import {
+  FacebookLoginButton,
+  GoogleLoginButton,
+} from "react-social-login-buttons";
+import { useNavigate } from "react-router";
+
 function Copyright(props) {
   return (
     <Typography
@@ -22,7 +28,7 @@ function Copyright(props) {
       align="center"
       {...props}
     >
-      {"Copyright © "}
+      {"Copyright Pho0m © "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
@@ -31,7 +37,9 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function Users() {
+export default function UserLogin() {
+  let navigate = useNavigate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -57,17 +65,14 @@ export default function Users() {
             margin: "10px",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Log in Commu
           </Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ mt: 1 }}
+            sx={{ mt: 10 }}
           >
             <TextField
               margin="normal"
@@ -95,17 +100,40 @@ export default function Users() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Log In
             </Button>
+            <br />
+            <br />
+
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Button
+                  style={{ color: "blue" }}
+                  variant="body2"
+                  onClick={() => {
+                    navigate(`/user/register`);
+                  }}
+                >
                   {"Don't have an account? Sign Up"}
-                </Link>
+                </Button>
               </Grid>
             </Grid>
           </Box>
+          <br />
+          <FacebookLoginButton
+            iconSize="20px"
+            style={{ fontSize: "15px" }}
+            align="center"
+            onClick={() => alert("Hello")}
+          />
+          <GoogleLoginButton
+            iconSize="20px"
+            style={{ fontSize: "15px" }}
+            align="center"
+            onClick={() => alert("Hello")}
+          />
         </Box>
+
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>

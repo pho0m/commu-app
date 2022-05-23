@@ -1,128 +1,78 @@
-import { Box, Typography, TextField, Button } from "@material-ui/core";
-import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
-import { useNavigate } from "react-router";
-import * as API from "../api";
 
-export default function Topics() {
-  const [values, setValues] = React.useState({});
-  const [loading, setLoading] = React.useState(false);
-  let navigate = useNavigate();
+import {
+  Box,
+  Paper,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActionArea,
+  Grid,
+  IconButton,
+} from "@mui/material";
+import { TextField } from "@material-ui/core";
+import SearchIcon from "@mui/icons-material/Search";
+import { mockData } from "./mockup";
+import CardTopics from "../components/CardTopic";
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
+const placeholder =
+  "https://media.discordapp.net/attachments/977819986217304134/977820013203423232/Blue_Banner_Birthday_Party_Invitation_1.png?width=1352&height=676";
 
-    (async () => {
-      try {
-        const { data } = await API.topics.createTopic(values, "test");
-
-        navigate("/home");
-
-        return data;
-      } catch (error) {}
-    })();
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    const output = values;
-    output[name] = value;
-
-    setValues(output);
-  };
-
+export default function Home() {
   return (
-    <Box
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-      }}
-    >
+    <Box sx={{ width: "100%", flexGrow: 1 }}>
+      <Paper
+        square
+        elevation={0}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          height: 50,
+          pl: 2,
+          bgcolor: "background.default",
+        }}
+      ></Paper>
       <Box
-        style={{
-          width: "100vh",
-          border: "1px solid rgba(0, 0, 0, 0.25)",
-          padding: "5vh",
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          pt: 2,
+          justifyContent: "space-between",
         }}
       >
-        <Box style={{ display: "flex", marginBottom: "3vh" }}>
-          <Box
+        <Typography variant="h4" component="h2">
+          Topics
+        </Typography>
+        <Box sx={{ display: "flex" }}>
+          <TextField
             style={{
-              borderRadius: "50%",
-              width: "80px",
-              height: "80px",
-              backgroundColor: "grey",
-            }}
-          />
-          <Box
-            style={{
-              display: "flex",
-              flexDirection: "column",
+              borderRadius: "30px",
+              backgroundColor: "#D9D9D9",
               justifyContent: "center",
-              paddingLeft: "3vh",
+              paddingLeft: "10px",
             }}
-          >
-            <Typography>pho0m</Typography>
-            <Typography>this is public post</Typography>
-          </Box>
+            placeholder="Search ...."
+            InputProps={{ disableUnderline: true }}
+          />
+          <IconButton>
+            <SearchIcon></SearchIcon>
+          </IconButton>
         </Box>
-
-        <form onSubmit={handleSubmit}>
-          <Typography>Title</Typography>
-          <TextField
-            value={values.title}
-            name="title"
-            onInput={(e) => handleChange(e)}
-            style={{ width: "100%", marginBottom: "3vh", marginTop: "1vh" }}
-            placeholder="what about your title pho0m"
-            variant="outlined"
-          />
-          <Typography>SubTitle</Typography>
-          <TextField
-            value={values.subtitle}
-            name="subtitle"
-            onInput={(e) => handleChange(e)}
-            style={{ width: "100%", marginBottom: "3vh", marginTop: "1vh" }}
-            placeholder="what about your sub title pho0m"
-            variant="outlined"
-          />
-          <Typography>Content</Typography>
-          <TextField
-            value={values.content}
-            name="content"
-            onInput={(e) => handleChange(e)}
-            style={{ width: "100%", marginBottom: "3vh", marginTop: "1vh" }}
-            placeholder="what are you thinking pho0m"
-            variant="outlined"
-            multiline
-            rows={4}
-          />
-
-          <Typography>Image</Typography>
-          <Box style={{ width: "100%", marginBottom: "3vh", marginTop: "1vh" }}>
-            <DropzoneArea
-              filesLimit={1}
-              acceptedFiles={["image/*"]}
-              dropzoneText={"Drag and drop an image here or click"}
-              onChange={(files) => console.log("Files:", files)}
-            />
-          </Box>
-          <Button
-            style={{
-              width: "100%",
-              backgroundColor: "#9BD2F0",
-              color: "white",
-            }}
-            type="submit"
+      </Box>
+      <Box sx={{ flexDirection: "row", pt: 3 }}>
+        <Grid item xs={12}>
+          <Grid
+            container
+            justifyContent="start"
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 4, sm: 8, md: 12 }}
           >
-            <Typography>Post Topic</Typography>
-          </Button>
-        </form>
+            {mockData.map((v) => (
+              <CardTopics value={v} />
+            ))}
+          </Grid>
+        </Grid>
       </Box>
     </Box>
   );

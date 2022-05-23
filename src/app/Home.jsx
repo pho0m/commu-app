@@ -18,6 +18,11 @@ import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import { useAsyncRetry } from "react-use";
 import * as API from "../api";
+import { mockData } from "./mockup";
+import { useNavigate } from "react-router";
+import { Link as RouterLink } from "react-router-dom";
+import Link from "@material-ui/core/Link";
+import CardTopics from "../components/CardTopic";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 const placeholder =
@@ -42,21 +47,23 @@ const images = [
 ];
 
 export default function Home() {
+  let navigate = useNavigate();
+
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = images.length;
 
-  const tp = useAsyncRetry(async () => {
-    try {
-      const { data } = await API.topics.getAllTopics();
+  // const tp = useAsyncRetry(async () => {
+  //   try {
+  //     const { data } = await API.topics.getAllTopics();
 
-      return data;
-    } catch (error) {
-      if (error.response.data.error.statusCode === 401) {
-        // setErrorState(true);
-      }
-    }
-  }, []);
+  //     return data;
+  //   } catch (error) {
+  //     if (error.response.data.error.statusCode === 401) {
+  //       // setErrorState(true);
+  //     }
+  //   }
+  // }, []);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -70,9 +77,9 @@ export default function Home() {
     setActiveStep(step);
   };
 
-  if (tp.loading) {
-    return <>Loading</>; //for loading
-  }
+  // if (tp.loading) {
+  //   return <>Loading</>; //for loading
+  // }
 
   return (
     <Box sx={{ width: "100%", flexGrow: 1 }}>
@@ -144,7 +151,12 @@ export default function Home() {
       <Box sx={{ flexDirection: "row", pt: 2 }}>
         <Typography variant="h4" component="h2">
           Topics{" "}
-          <Button variant="contained" onClick={() => {}}>
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigate("/topics/all");
+            }}
+          >
             See more
           </Button>
         </Typography>
@@ -158,36 +170,8 @@ export default function Home() {
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
-            {tp.value.map((value) => (
-              <Grid key={value.id} item>
-                <Card sx={{ width: 410, boxShadow: 3 }}>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={value.image}
-                      alt={value.title}
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        {value.title}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          display: "-webkit-box",
-                          overflow: "hidden",
-                          WebkitBoxOrient: "vertical",
-                          WebkitLineClamp: 4,
-                        }}
-                        variant="body2"
-                        color="text.secondary"
-                      >
-                        {value.subtitle}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
+            {mockData.map((v) => (
+              <CardTopics value={v} />
             ))}
           </Grid>
         </Grid>

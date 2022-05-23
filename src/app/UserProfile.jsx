@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import * as React from "react";
 
-export default function UserEdit() {
+export default function UserProfile() {
   return (
     <Box
       style={{ display: "flex", justifyContent: "center", paddingTop: "5vh" }}

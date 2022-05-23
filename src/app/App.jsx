@@ -1,23 +1,21 @@
 import * as React from "react";
+
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 import { Box, Toolbar } from "@mui/material";
 import CommuAppBar from "../components/AppBar";
 import CommuDrawer from "../components/Drawer";
+
 import PageNotFound from "./PageNotFound";
-import Register from "./Register";
+import UserRegister from "./UserRegister";
 import Home from "./Home";
-// import Topics from "./Topics";
-import Users from "./User";
+import UserLogin from "./UserLogin";
+import UserProfile from "./UserProfile";
 import UserEdit from "./UserEdit";
-import SingleTopic from "./SingleTopic";
-
-import CreateTopicsPage from "./CreateTopics";
-import CreateTopics from "./CreateTopics";
-import AllTopics from "./AllTopics";
-
-import "./app.css";
+import Topic from "./Topic";
 import Topics from "./Topics";
+import CreateTopic from "./TopicCreate";
+import "./app.css";
 
 function App(props) {
   let navigate = useNavigate();
@@ -68,18 +66,15 @@ function App(props) {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="home" element={<Home />} />
-          <Route path="user" element={<Users />} />
-          <Route path="register" element={<Register />} />
+
+          <Route path="user" element={<UserProfile />} />
+          <Route path="user/login" element={<UserLogin />} />
+          <Route path="user/register" element={<UserRegister />} />
           <Route path="user/edit" element={<UserEdit />} />
 
-          <Route path="topics" element={<Topics />} />
-          <Route path="topics/:id" element={<SingleTopic />} />
-
-          <Route path="topics" element={<SingleTopic />} />
-          {/* <Route path="topics/:id" element={<SingleTopic />} /> */}
-          <Route path="create" element={<CreateTopics />} />
-
-          <Route path="alltopics" element={<AllTopics />} />
+          <Route path="topics" element={<CreateTopic />} />
+          <Route path="topics/:id" element={<Topic />} />
+          <Route path="topics/all" element={<Topics />} />
 
           <Route path="*" element={<PageNotFound />} />
         </Routes>
