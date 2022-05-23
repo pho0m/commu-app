@@ -12,7 +12,6 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
-import { mockData } from "./mockup";
 import { useNavigate } from "react-router";
 import CardTopics from "../components/CardTopic";
 import { getDocs, collection } from "firebase/firestore";
@@ -44,7 +43,7 @@ export default function Home() {
   let navigate = useNavigate();
 
   const theme = useTheme();
-  const [activeStep, setActiveStep] = React.useState(0);
+  let [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = images.length;
   const [loading, setLoading] = React.useState(false);
   const topicCollection = collection(db, "/topics");
@@ -133,7 +132,7 @@ export default function Home() {
           <Button
             size="small"
             onClick={handleNext}
-            disabled={activeStep === maxSteps - 1}
+            disabled={(activeStep = maxSteps - 1)}
           >
             Next
             {theme.direction === "rtl" ? (

@@ -19,6 +19,9 @@ import "./app.css";
 import TopicEdit from "./TopicEdit";
 import { auth } from "./firebase_config";
 import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { getDoc, collection, doc } from "firebase/firestore"; //addDoc
+import { db } from "./firebase_config";
+// import Swal from "sweetalert2";
 
 function App(props) {
   let navigate = useNavigate();
@@ -46,13 +49,54 @@ function App(props) {
     });
   }, []);
 
-  const handleLogin = () => {
+  const handleLoginWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     auth.useDeviceLanguage();
 
     signInWithPopup(auth, provider)
       .then((result) => {
-        console.log(result.user); // We don’t really do it
+        //FIXME
+        // console.log("in login with google");
+
+        const userCollection = collection(db, "/users");
+        const targetDoc = doc(userCollection, result.user.uid);
+
+        // console.log(targetDoc);
+
+        //#FIXME
+        getDoc(targetDoc)
+          .then((data) => {
+            // console.log(data.data());
+
+            if (data.data() !== undefined || data.data() !== null) {
+              // console.log("have user in db");
+            } else {
+              // console.log("don't have user in db");
+              // let usr = result.user;
+              // const d = Date.now();
+              // let userData = {
+              //   uid: usr.uid,
+              //   displayName: usr.displayName,
+              //   email: usr.email,
+              //   avatar: usr.photoURL,
+              //   createAt: d,
+              // };
+              // console.log(userData);
+              // console.log(result.user);
+              // addDoc(userCollection, userData)
+              //   .then(() => {})
+              //   .catch((err) => {
+              //     Swal.fire({
+              //       icon: "error",
+              //       title: "Oops...",
+              //       text: err,
+              //     });
+              //   });
+            }
+          })
+          .catch((err) => {
+            // console.log("db error");
+          });
 
         navigate("/home");
       })
@@ -64,7 +108,7 @@ function App(props) {
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        console.log("logout "); // We don’t really do it
+        // console.log("logout "); // We don’t really do it
         navigate("/");
       })
       .catch((error) => {
@@ -84,11 +128,9 @@ function App(props) {
     navigate(`/${value.key}`);
   };
 
-  console.log(userInfo);
-
   return (
     <Box sx={{ display: "flex" }}>
-      {userInfo == undefined || userInfo == null ? (
+      {userInfo === undefined || userInfo === null ? (
         <></>
       ) : (
         <>
@@ -116,21 +158,22 @@ function App(props) {
       >
         <Toolbar />
         <Routes>
-          {userInfo == undefined || userInfo == null ? (
+          {userInfo === undefined || userInfo === null ? (
             <Route
               path="/"
-              element={<UserLogin login={handleLogin} props={{}} />}
+              element={<UserLogin login={handleLoginWithGoogle} props={{}} />}
             />
           ) : (
             <>
+              <Route path="/" element={<Home />} />
               <Route path="home" element={<Home />} />
               <Route
                 path="user"
-                element={<UserProfile logout={handleLogout} props={{}} />}
+                element={<UserProfile logout={handleLogout} user={userInfo} />}
               />
               <Route path="user/register" element={<UserRegister />} />
               <Route path="user/edit" element={<UserEdit />} />
-              <Route path="topics" element={<CreateTopic />} />
+              <Route path="topics" element={<CreateTopic user={userInfo} />} />
               <Route path="topics/:id" element={<Topic />} />
               <Route path="topics/:id/edit" element={<TopicEdit />} />
               <Route path="topics/all" element={<Topics />} />

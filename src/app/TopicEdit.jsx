@@ -135,10 +135,6 @@ export default function TopicEdit() {
 
             output["image"] = url;
 
-            console.log(url);
-            console.log("==============");
-            console.log(output);
-
             setValues(output);
           })
           .catch((err) =>
@@ -155,8 +151,6 @@ export default function TopicEdit() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-
-    console.log(values);
 
     updateDoc(targetDoc, values)
       .then(() => {

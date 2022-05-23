@@ -35,7 +35,6 @@ const theme = createTheme();
 export default function UserLogin(props) {
   let navigate = useNavigate();
 
-  console.log(props);
   // const handleSubmit = (event) => {
   //   event.preventDefault();
   //   const data = new FormData(event.currentTarget);
@@ -105,7 +104,6 @@ export default function UserLogin(props) {
               <Grid item>
                 <Button
                   style={{ color: "blue" }}
-                  variant="body2"
                   onClick={() => {
                     navigate(`/user/register`);
                   }}

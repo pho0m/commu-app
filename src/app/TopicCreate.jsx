@@ -7,18 +7,17 @@ import { db } from "./firebase_config";
 import Swal from "sweetalert2";
 import { storage } from "./firebase_config";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import LinearProgress from "@mui/material/LinearProgress";
 
 import { v4 } from "uuid";
 import { LinearProgressWithLabel } from "../components/ProgressBar";
+import Avatar from "react-avatar";
 
-export default function CreateTopic() {
+export default function CreateTopic(props) {
   const [values, setValues] = React.useState({});
   const [loading, setLoading] = React.useState(false);
   const [file2upload, setFile2Upload] = React.useState("");
   const [fileRef, setfileRef] = React.useState("");
   const [progress, setProgress] = React.useState(0);
-  const [getUploadedFile, setGetUploadedFile] = React.useState();
 
   const topicCollection = collection(db, "/topics");
   let navigate = useNavigate();
@@ -70,6 +69,7 @@ export default function CreateTopic() {
               } else {
                 output["image"] = url;
               }
+              output["by"] = props.user.uid;
 
               setValues(output);
 
@@ -130,13 +130,11 @@ export default function CreateTopic() {
         }}
       >
         <Box style={{ display: "flex", marginBottom: "3vh" }}>
-          <Box
-            style={{
-              borderRadius: "50%",
-              width: "80px",
-              height: "80px",
-              backgroundColor: "grey",
-            }}
+          <Avatar
+            alt="userimg"
+            size={100}
+            round={true}
+            src={props.user.photoURL}
           />
           <Box
             style={{
@@ -145,7 +143,7 @@ export default function CreateTopic() {
               paddingLeft: "3vh",
             }}
           >
-            <Typography>pho0m</Typography>
+            <Typography>{props.user.displayName}</Typography>
             <Typography>this is public post</Typography>
           </Box>
         </Box>

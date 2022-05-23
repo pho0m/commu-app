@@ -1,9 +1,8 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import * as React from "react";
+import Avatar from "react-avatar";
 
 export default function UserProfile(props) {
-  console.log(props);
-
   return (
     <Box
       style={{ display: "flex", justifyContent: "center", paddingTop: "5vh" }}
@@ -17,16 +16,17 @@ export default function UserProfile(props) {
           padding: "5vh",
         }}
       >
-        <Box
-          style={{
-            borderRadius: "50%",
-            width: "150px",
-            height: "150px",
-            backgroundColor: "grey",
-            marginBottom: "3vh",
-          }}
+        <Avatar
+          alt="userimg"
+          size={150}
+          round={true}
+          src={props.user.photoURL}
         />
-        <Typography style={{ marginBottom: "1vh" }}>Pho0m</Typography>
+        <br />
+
+        <Typography style={{ marginBottom: "1vh" }}>
+          {props.user.displayName}
+        </Typography>
         <Box
           style={{
             height: "1px",
@@ -35,13 +35,10 @@ export default function UserProfile(props) {
           }}
         ></Box>
         <Typography style={{ marginBottom: "4vh" }}>
-          Email: pho0m@commumail.com
+          Email: {props.user.email}
         </Typography>
         <Typography style={{ marginBottom: "4vh" }}>
-          With: commu account
-        </Typography>
-        <Typography style={{ marginBottom: "4vh" }}>
-          Create At: 21/05/2022
+          Create At: {props.user.metadata.creationTime}
         </Typography>
         <Box
           style={{
