@@ -7,7 +7,7 @@ import CommuAppBar from "../components/AppBar";
 import CommuDrawer from "../components/Drawer";
 
 import PageNotFound from "./PageNotFound";
-import UserRegister from "./UserRegister";
+// import UserRegister from "./UserRegister";
 import Home from "./Home";
 import UserLogin from "./UserLogin";
 import UserProfile from "./UserProfile";
@@ -18,7 +18,14 @@ import CreateTopic from "./TopicCreate";
 import "./app.css";
 import TopicEdit from "./TopicEdit";
 import { auth } from "./firebase_config";
-import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signOut,
+  getAuth,
+} from "firebase/auth";
+
 import {
   getDoc,
   collection,
@@ -69,6 +76,63 @@ function App(props) {
     //   });
     // }
   }, []);
+
+  const handleLoginWithFacebook = () => {
+    const provider = new FacebookAuthProvider();
+    auth.useDeviceLanguage();
+
+    signInWithPopup(auth, provider).then((result) => {
+      let usr = result.user;
+
+      console.log("signInWithPopup");
+
+      const credential = FacebookAuthProvider.credentialFromResult(result);
+      const accessToken = credential.accessToken;
+
+      console.log(usr);
+
+      console.log(accessToken);
+      (async () => {
+        const q = query(userCollection, where("email", "==", usr.email));
+        const querySnapshot = await getDocs(q);
+        let arr = [];
+
+        querySnapshot.forEach((doc) => {
+          arr.push(doc.data());
+        });
+
+        let qData = arr[0];
+
+        console.log(qData);
+
+        if (qData === undefined || qData === null) {
+          let userData = {
+            displayName: usr.displayName,
+            email: usr.email,
+            avatar: usr.photoURL,
+          };
+
+          addDoc(userCollection, userData)
+            .then(() => {})
+            .catch((err) => {
+              navigate("/user/login");
+
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: err,
+              });
+            });
+        } else {
+          console.log("in else");
+
+          setUserInfo(qData);
+        }
+      })();
+
+      navigate("/home");
+    });
+  };
 
   const handleLoginWithGoogle = () => {
     const provider = new GoogleAuthProvider();
@@ -174,7 +238,13 @@ function App(props) {
         <Routes>
           <Route
             path="/user/login"
-            element={<UserLogin login={handleLoginWithGoogle} props={{}} />}
+            element={
+              <UserLogin
+                loginGoogle={handleLoginWithGoogle}
+                loginFB={handleLoginWithFacebook}
+                props={{}}
+              />
+            }
           />
 
           <Route path="/" element={<Home />} />

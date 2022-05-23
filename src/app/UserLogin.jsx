@@ -118,13 +118,13 @@ export default function UserLogin(props) {
             iconSize="20px"
             style={{ fontSize: "15px" }}
             align="center"
-            onClick={props.login}
+            onClick={props.loginGoogle}
           />
           <FacebookLoginButton
             iconSize="20px"
             style={{ fontSize: "15px" }}
             align="center"
-            onClick={() => alert("Hello")}
+            onClick={props.loginFB}
           />
         </Box>
 
