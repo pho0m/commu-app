@@ -49,6 +49,16 @@ export default function CreateTopic() {
   };
 
   const handleSubmit = (e) => {
+    console.log(file2upload);
+
+    if (file2upload === null || file2upload === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please select file to upload",
+      });
+    }
+
     e.preventDefault();
     setLoading(true);
 
@@ -72,7 +82,13 @@ export default function CreateTopic() {
           getDownloadURL(uploadTask.snapshot.ref)
             .then((url) => {
               const output = values;
-              output["image"] = url;
+
+              if (url === undefined || url === "") {
+                output["image"] =
+                  "https://media.discordapp.net/attachments/900736408325615667/977585190736130148/1_1.png?width=1352&height=676";
+              } else {
+                output["image"] = url;
+              }
 
               setValues(output);
               console.log("output: " + values.image);
