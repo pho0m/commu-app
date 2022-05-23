@@ -178,7 +178,9 @@ export default function Home() {
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
             {topicsState.slice(0, 12).map((v) => (
-              <CardTopics value={v} />
+              <Grid key={v.id} item>
+                <CardTopics value={v} />
+              </Grid>
             ))}
           </Grid>
         </Grid>

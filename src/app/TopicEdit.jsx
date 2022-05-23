@@ -15,7 +15,8 @@ import { useNavigate, useParams } from "react-router";
 import { LinearProgressWithLabel } from "../components/ProgressBar";
 import { v4 } from "uuid";
 import { storage } from "./firebase_config";
-import { ref } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { async } from "@firebase/util";
 
 const imgLink =
   "https://media.discordapp.net/attachments/935973325707030568/977873476377526272/user.png";
@@ -90,8 +91,7 @@ export default function TopicEdit() {
   const [values, setValues] = React.useState({});
   const [topicState, setTopicState] = React.useState({});
   const [progress, setProgress] = React.useState(0);
-  const [file2upload, setFile2Upload] = React.useState("");
-  const [fileRef, setfileRef] = React.useState("");
+  const [getUploadedFile, setGetUploadedFile] = React.useState();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -106,17 +106,57 @@ export default function TopicEdit() {
     navigate(-1);
   };
 
-  const handleUploadImage = (files) => {
-    const pathname = "/images/";
-    const fileRef = ref(storage, pathname + v4() + "_" + files.name);
+  const handleUploadImage = (e) => {
+    let file2upload = e;
 
-    setFile2Upload(files);
-    setfileRef(fileRef);
+    const pathname = "/images/";
+    const fileRef = ref(storage, pathname + v4() + "_" + file2upload.name);
+
+    const uploadTask = uploadBytesResumable(fileRef, file2upload);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const prog = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(Math.round(prog));
+      },
+      (err) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err,
+        });
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref)
+          .then((url) => {
+            setGetUploadedFile(url);
+
+            const output = values;
+
+            output["image"] = url;
+
+            console.log(url);
+            console.log("==============");
+            console.log(output);
+
+            setValues(output);
+          })
+          .catch((err) =>
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err,
+            })
+          );
+      }
+    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
+
+    console.log(values);
 
     updateDoc(targetDoc, values)
       .then(() => {
@@ -137,6 +177,8 @@ export default function TopicEdit() {
     await getDoc(targetDoc)
       .then((data) => {
         setTopicState(data.data());
+
+        setGetUploadedFile(data.data().image);
       })
       .catch((err) => {
         Swal.fire({
@@ -235,7 +277,7 @@ export default function TopicEdit() {
                 className={classes.containerimage}
                 alt="image-content"
                 style={{ width: "90%" }}
-                src={topicState.image}
+                src={getUploadedFile}
               />
               <Box sx={{ width: "30%" }}>
                 <Typography>Upload File</Typography>

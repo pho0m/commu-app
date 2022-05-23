@@ -101,7 +101,9 @@ export default function Topics() {
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
             {topicsState.map((v) => (
-              <CardTopics value={v} />
+              <Grid key={v.id} item>
+                <CardTopics value={v} />
+              </Grid>
             ))}
           </Grid>
         </Grid>
