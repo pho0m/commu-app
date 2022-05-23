@@ -4,7 +4,11 @@ import * as React from "react";
 export default function UserEdit() {
   return (
     <Box
-      style={{ display: "flex", justifyContent: "center", paddingTop: "5vh" }}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        paddingTop: "5vh",
+      }}
     >
       <Box
         style={{
@@ -46,7 +50,6 @@ export default function UserEdit() {
         <Box
           style={{
             display: "flex",
-            justifyContent: "end",
           }}
         >
           <Button

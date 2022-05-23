@@ -6,27 +6,21 @@ import {
   Typography,
   Button,
   MobileStepper,
-  Card,
-  CardContent,
-  CardMedia,
-  CardActionArea,
   Grid,
 } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
-import { useAsyncRetry } from "react-use";
-import * as API from "../api";
 import { mockData } from "./mockup";
 import { useNavigate } from "react-router";
-import { Link as RouterLink } from "react-router-dom";
-import Link from "@material-ui/core/Link";
 import CardTopics from "../components/CardTopic";
+import { getDocs, collection } from "firebase/firestore";
+import { db } from "./firebase_config";
+import Swal from "sweetalert2";
+import { useAsync } from "react-use";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
-const placeholder =
-  "https://media.discordapp.net/attachments/977819986217304134/977820013203423232/Blue_Banner_Birthday_Party_Invitation_1.png?width=1352&height=676";
 
 const images = [
   {
@@ -52,18 +46,34 @@ export default function Home() {
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = images.length;
+  const [loading, setLoading] = React.useState(false);
+  const topicCollection = collection(db, "/topics");
+  const [topicsState, setTopicsState] = React.useState([]);
 
-  // const tp = useAsyncRetry(async () => {
-  //   try {
-  //     const { data } = await API.topics.getAllTopics();
+  const tp = useAsync(async () => {
+    setLoading(true);
 
-  //     return data;
-  //   } catch (error) {
-  //     if (error.response.data.error.statusCode === 401) {
-  //       // setErrorState(true);
-  //     }
-  //   }
-  // }, []);
+    await getDocs(topicCollection)
+      .then((values) => {
+        let topics = [];
+        values.docs.map((doc) => {
+          return (topics = [...topics, { id: doc.id, ...doc.data() }]);
+        });
+
+        setTopicsState(topics);
+      })
+      .catch((err) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err,
+        });
+      });
+  }, []);
+
+  if (tp.loading) {
+    return <>Loading</>; //for loading
+  }
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -76,10 +86,6 @@ export default function Home() {
   const handleStepChange = (step) => {
     setActiveStep(step);
   };
-
-  // if (tp.loading) {
-  //   return <>Loading</>; //for loading
-  // }
 
   return (
     <Box sx={{ width: "100%", flexGrow: 1 }}>
@@ -99,6 +105,7 @@ export default function Home() {
         index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents
+        autoPlay={false}
       >
         {images.map((step, index) => (
           <div key={step.label}>
@@ -170,7 +177,7 @@ export default function Home() {
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
-            {mockData.map((v) => (
+            {topicsState.slice(0, 12).map((v) => (
               <CardTopics value={v} />
             ))}
           </Grid>

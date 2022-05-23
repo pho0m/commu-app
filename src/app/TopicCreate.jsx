@@ -1,26 +1,112 @@
-import { Box, Typography, TextField, Button } from "@material-ui/core";
-import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
+
+import { Box, Typography, TextField, Button } from "@material-ui/core";
 import { useNavigate } from "react-router";
-import * as API from "../api";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "./firebase_config";
+import Swal from "sweetalert2";
+import { useState } from "react";
+import { storage } from "./firebase_config";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import PropTypes from "prop-types";
+import LinearProgress from "@mui/material/LinearProgress";
+
+import { v4 } from "uuid";
+
+function LinearProgressWithLabel(props) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ width: "100%", mr: 1 }}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2">{`${Math.round(props.value)}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
+LinearProgressWithLabel.propTypes = {
+  value: PropTypes.number.isRequired,
+};
 
 export default function CreateTopic() {
   const [values, setValues] = React.useState({});
   const [loading, setLoading] = React.useState(false);
+  const [file2upload, setFile2Upload] = useState("");
+  const [fileRef, setfileRef] = useState("");
+  const [progress, setProgress] = useState(0);
+
+  const topicCollection = collection(db, "/topics");
   let navigate = useNavigate();
+
+  const handleUploadImage = (files) => {
+    const pathname = "/images/";
+    const fileRef = ref(storage, pathname + v4() + "_" + files.name);
+
+    setFile2Upload(files);
+    setfileRef(fileRef);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
     (async () => {
-      try {
-        const { data } = await API.topics.createTopic(values, "test");
+      const uploadTask = uploadBytesResumable(fileRef, file2upload);
 
-        navigate("/home");
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const prog = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(Math.round(prog));
+        },
+        (err) => {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: err,
+          });
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then((url) => {
+              const output = values;
+              output["image"] = url;
 
-        return data;
-      } catch (error) {}
+              setValues(output);
+              console.log("output: " + values.image);
+
+              addDoc(topicCollection, values)
+                .then(() => {
+                  var ttt = Swal.fire({
+                    icon: "success",
+                    title: "Your topic has been saved",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+
+                  ttt.then(() => navigate("/home"));
+                })
+                .catch((err) => {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: err,
+                  });
+                });
+            })
+            .catch((err) =>
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: err,
+              })
+            );
+        }
+      );
+
+      console.log(values);
     })();
   };
 
@@ -38,7 +124,6 @@ export default function CreateTopic() {
       style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
         alignItems: "center",
         width: "100%",
       }}
@@ -63,7 +148,6 @@ export default function CreateTopic() {
             style={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
               paddingLeft: "3vh",
             }}
           >
@@ -75,6 +159,7 @@ export default function CreateTopic() {
         <form onSubmit={handleSubmit}>
           <Typography>Title</Typography>
           <TextField
+            required
             value={values.title}
             name="title"
             onInput={(e) => handleChange(e)}
@@ -84,6 +169,7 @@ export default function CreateTopic() {
           />
           <Typography>SubTitle</Typography>
           <TextField
+            required
             value={values.subtitle}
             name="subtitle"
             onInput={(e) => handleChange(e)}
@@ -93,6 +179,7 @@ export default function CreateTopic() {
           />
           <Typography>Content</Typography>
           <TextField
+            required
             value={values.content}
             name="content"
             onInput={(e) => handleChange(e)}
@@ -105,11 +192,17 @@ export default function CreateTopic() {
 
           <Typography>Image</Typography>
           <Box style={{ width: "100%", marginBottom: "3vh", marginTop: "1vh" }}>
-            <DropzoneArea
-              filesLimit={1}
-              acceptedFiles={["image/*"]}
-              dropzoneText={"Drag and drop an image here or click"}
-              onChange={(files) => console.log("Files:", files)}
+            <h1 className="text-center bg-light text-secondary">Upload File</h1>
+            <Box sx={{ width: "100%" }}>
+              <LinearProgressWithLabel value={progress} />
+            </Box>
+            <input
+              name="image"
+              type="file"
+              id="fileInput"
+              onChange={(e) => {
+                handleUploadImage(e.target.files[0]);
+              }}
             />
           </Box>
           <Button

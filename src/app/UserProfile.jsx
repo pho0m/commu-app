@@ -24,9 +24,7 @@ export default function UserProfile() {
             marginBottom: "3vh",
           }}
         />
-        <Typography style={{ marginBottom: "1vh" }}>
-          <h3>Pho0m</h3>
-        </Typography>
+        <Typography style={{ marginBottom: "1vh" }}>Pho0m</Typography>
         <Box
           style={{
             height: "1px",

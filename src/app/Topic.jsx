@@ -5,9 +5,12 @@ import { makeStyles } from "@mui/styles";
 import TextField from "@mui/material/TextField";
 import { Avatar, Grid, Paper } from "@material-ui/core";
 import { Typography } from "@mui/material";
-import { useLocation } from "react-use";
-import { mockData } from "./mockup";
+import { getDoc, collection, doc } from "firebase/firestore";
+import { db } from "./firebase_config";
+import Swal from "sweetalert2";
+
 import SendIcon from "@mui/icons-material/Send";
+import { useAsync, useLocation } from "react-use";
 
 const imgLink =
   "https://media.discordapp.net/attachments/935973325707030568/977873476377526272/user.png";
@@ -69,16 +72,38 @@ const useStyles = makeStyles({
   },
 });
 
-export default function SingleTopic() {
-  const { state } = useLocation();
-  const { usr } = state;
+export default function Topic() {
+  const location = useLocation();
+  const id = location.state.usr;
+  console.log(id);
+
+  const [loading, setLoading] = React.useState(false);
+
   const classes = useStyles();
+  const topicCollection = collection(db, "/topics");
+  const targetDoc = doc(topicCollection, id);
 
-  // console.log(usr);
-  let single = mockData[0];
+  const [topicState, setTopicState] = React.useState({});
 
-  console.log(single.title);
-  // console.log(mockData[usr - 1]);
+  const tp = useAsync(async () => {
+    setLoading(true);
+
+    await getDoc(targetDoc)
+      .then((data) => {
+        setTopicState(data.data());
+      })
+      .catch((err) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err,
+        });
+      });
+  }, []);
+
+  if (tp.loading) {
+    return <>Loading</>;
+  }
 
   return (
     <>
@@ -93,7 +118,7 @@ export default function SingleTopic() {
             className={classes.column}
             style={{ fontSize: "40px", flexGrow: "1", fontWeight: "600" }}
           >
-            {single.title}
+            {topicState.title}
           </Box>
           <Box
             className={classes.column}
@@ -134,16 +159,17 @@ export default function SingleTopic() {
             flexDirection: "row",
             backgroundColor: "transparent",
             borderColor: "transparent",
-            justifyContent: "start",
             padding: "20px 40px 5px",
           }}
         >
           <img
             alt="user-image"
-            src={single.avatar}
+            src={topicState.avatar}
             style={{ height: "30px" }}
           ></img>
-          <Typography sx={{ paddingLeft: 2 }}>{single.displayname}</Typography>
+          <Typography sx={{ paddingLeft: 2 }}>
+            {topicState.displayname}
+          </Typography>
         </Box>
       </Box>
       <Box
@@ -157,12 +183,12 @@ export default function SingleTopic() {
             className={classes.containerimage}
             alt="image-content"
             style={{ width: "50%" }}
-            src={single.image}
+            src={topicState.image}
           />
           <Box className={classes.containertext}>
-            <Typography variant="h4">{single.subtitle}</Typography>
+            <Typography variant="h4">{topicState.subtitle}</Typography>
             <br />
-            <Typography variant="h6">{single.content}</Typography>
+            <Typography variant="h6">{topicState.content}</Typography>
           </Box>
         </Box>
       </Box>
@@ -174,7 +200,6 @@ export default function SingleTopic() {
             flexDirection: "row",
             backgroundColor: "transparent",
             borderColor: "transparent",
-            justifyContent: "start",
             paddingTop: "10px",
           }}
         >
@@ -217,10 +242,6 @@ export default function SingleTopic() {
               ></Box>
             </Box>
           </Box>
-          <Box
-            className={classes.row}
-            style={{ justifyContent: "right" }}
-          ></Box>
         </Box>
         {userComment.map((value) => (
           <Paper style={{ padding: "40px 20px" }}>
