@@ -43,7 +43,7 @@ export default function Home() {
   let navigate = useNavigate();
 
   const theme = useTheme();
-  let [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = images.length;
   const [loading, setLoading] = React.useState(false);
   const topicCollection = collection(db, "/topics");
@@ -65,8 +65,9 @@ export default function Home() {
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: err,
+          text: "unauthorized please login first",
         });
+        navigate("/user/login");
       });
   }, []);
 
@@ -132,7 +133,7 @@ export default function Home() {
           <Button
             size="small"
             onClick={handleNext}
-            disabled={(activeStep = maxSteps - 1)}
+            disabled={activeStep === maxSteps - 1}
           >
             Next
             {theme.direction === "rtl" ? (

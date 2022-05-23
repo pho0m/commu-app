@@ -69,7 +69,7 @@ export default function UserLogin(props) {
             noValidate
             sx={{ mt: 10 }}
           >
-            <TextField
+            {/* <TextField
               margin="normal"
               required
               fullWidth
@@ -96,11 +96,11 @@ export default function UserLogin(props) {
               sx={{ mt: 3, mb: 2 }}
             >
               Log In
-            </Button>
-            <br />
-            <br />
+            </Button> */}
+            {/* <br />
+            <br /> */}
 
-            <Grid container>
+            {/* <Grid container>
               <Grid item>
                 <Button
                   style={{ color: "blue" }}
@@ -111,7 +111,7 @@ export default function UserLogin(props) {
                   {"Don't have an account? Sign Up"}
                 </Button>
               </Grid>
-            </Grid>
+            </Grid> */}
           </Box>
           <br />
           <GoogleLoginButton

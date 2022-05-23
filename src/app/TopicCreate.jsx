@@ -7,10 +7,12 @@ import { db } from "./firebase_config";
 import Swal from "sweetalert2";
 import { storage } from "./firebase_config";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import LinearProgress from "@mui/material/LinearProgress";
 
 import { v4 } from "uuid";
 import { LinearProgressWithLabel } from "../components/ProgressBar";
 import Avatar from "react-avatar";
+import { useAsync } from "react-use";
 
 export default function CreateTopic(props) {
   const [values, setValues] = React.useState({});
@@ -18,9 +20,26 @@ export default function CreateTopic(props) {
   const [file2upload, setFile2Upload] = React.useState("");
   const [fileRef, setfileRef] = React.useState("");
   const [progress, setProgress] = React.useState(0);
+  const [getUploadedFile, setGetUploadedFile] = React.useState();
 
   const topicCollection = collection(db, "/topics");
   let navigate = useNavigate();
+
+  const tp = useAsync(async () => {
+    setLoading(true);
+    if (props.user === undefined || props.user === null) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "unauthorized please login",
+      });
+      navigate("/user/login");
+    }
+  }, []);
+
+  if (tp.loading) {
+    return <>Loading</>; //for loading
+  }
 
   const handleUploadImage = (files) => {
     const pathname = "/images/";
@@ -69,7 +88,9 @@ export default function CreateTopic(props) {
               } else {
                 output["image"] = url;
               }
-              output["by"] = props.user.uid;
+
+              output["avatar"] = props.user.avatar;
+              output["displayName"] = props.user.displayName;
 
               setValues(output);
 
@@ -134,7 +155,7 @@ export default function CreateTopic(props) {
             alt="userimg"
             size={100}
             round={true}
-            src={props.user.photoURL}
+            src={props.user.avatar}
           />
           <Box
             style={{

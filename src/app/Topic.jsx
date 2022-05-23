@@ -198,13 +198,9 @@ export default function Topic() {
             padding: "20px 40px 5px",
           }}
         >
-          <img
-            alt="user-image"
-            src={topicState.avatar}
-            style={{ height: "30px" }}
-          />
+          <Avatar alt="userimg" round={true} src={topicState.avatar} />
           <Typography sx={{ paddingLeft: 2 }}>
-            {topicState.displayname}
+            by {topicState.displayName}
           </Typography>
         </Box>
       </Box>

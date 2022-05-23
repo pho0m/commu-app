@@ -19,8 +19,11 @@ import { useAsync } from "react-use";
 import { collection, getDocs } from "firebase/firestore";
 import Swal from "sweetalert2";
 import { db } from "./firebase_config";
+import { useNavigate } from "react-router";
 
 export default function Topics() {
+  let navigate = useNavigate();
+
   const [loading, setLoading] = React.useState(false);
   const topicCollection = collection(db, "/topics");
   const [topicsState, setTopicsState] = React.useState([]);
@@ -28,6 +31,7 @@ export default function Topics() {
   const tp = useAsync(async () => {
     setLoading(true);
 
+    //FIXME
     await getDocs(topicCollection)
       .then((values) => {
         let topics = [];
@@ -38,6 +42,8 @@ export default function Topics() {
         setTopicsState(topics);
       })
       .catch((err) => {
+        navigate("/user/login");
+
         Swal.fire({
           icon: "error",
           title: "Oops...",
