@@ -19,9 +19,17 @@ import "./app.css";
 import TopicEdit from "./TopicEdit";
 import { auth } from "./firebase_config";
 import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-import { getDoc, collection, doc } from "firebase/firestore"; //addDoc
+import {
+  getDoc,
+  collection,
+  doc,
+  addDoc,
+  where,
+  getDocs,
+  query,
+} from "firebase/firestore"; //
 import { db } from "./firebase_config";
-// import Swal from "sweetalert2";
+import Swal from "sweetalert2";
 
 function App(props) {
   let navigate = useNavigate();
@@ -35,6 +43,8 @@ function App(props) {
   const [selectedPath, setSelectedIndex] = React.useState(path);
   const [title, setTitle] = React.useState("Home");
   const [userInfo, setUserInfo] = React.useState();
+  const [id, setID] = React.useState();
+  const userCollection = collection(db, "/users");
 
   React.useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -47,69 +57,75 @@ function App(props) {
         setUserInfo(null);
       }
     });
+
+    // if (userInfo === undefined || userInfo === null) {
+    //   auth.onAuthStateChanged((user) => {
+    //     if (user == null) {
+    //       console.log("in if");
+    //     } else {
+    //       navigate("/user/login");
+    //       console.log("in else");
+    //     }
+    //   });
+    // }
   }, []);
 
   const handleLoginWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     auth.useDeviceLanguage();
 
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        //FIXME
-        // console.log("in login with google");
+    signInWithPopup(auth, provider).then((result) => {
+      let usr = result.user;
 
-        const userCollection = collection(db, "/users");
-        const targetDoc = doc(userCollection, result.user.uid);
+      console.log("signInWithPopup");
 
-        // console.log(targetDoc);
+      (async () => {
+        const q = query(userCollection, where("email", "==", usr.email));
+        const querySnapshot = await getDocs(q);
+        let arr = [];
 
-        //#FIXME
-        getDoc(targetDoc)
-          .then((data) => {
-            // console.log(data.data());
+        querySnapshot.forEach((doc) => {
+          arr.push(doc.data());
+        });
 
-            if (data.data() !== undefined || data.data() !== null) {
-              // console.log("have user in db");
-            } else {
-              // console.log("don't have user in db");
-              // let usr = result.user;
-              // const d = Date.now();
-              // let userData = {
-              //   uid: usr.uid,
-              //   displayName: usr.displayName,
-              //   email: usr.email,
-              //   avatar: usr.photoURL,
-              //   createAt: d,
-              // };
-              // console.log(userData);
-              // console.log(result.user);
-              // addDoc(userCollection, userData)
-              //   .then(() => {})
-              //   .catch((err) => {
-              //     Swal.fire({
-              //       icon: "error",
-              //       title: "Oops...",
-              //       text: err,
-              //     });
-              //   });
-            }
-          })
-          .catch((err) => {
-            // console.log("db error");
-          });
+        let qData = arr[0];
 
-        navigate("/home");
-      })
-      .catch((error) => {
-        window.alert(error);
-      });
+        console.log(qData);
+
+        if (qData === undefined || qData === null) {
+          let userData = {
+            displayName: usr.displayName,
+            email: usr.email,
+            avatar: usr.photoURL,
+          };
+
+          addDoc(userCollection, userData)
+            .then(() => {})
+            .catch((err) => {
+              navigate("/user/login");
+
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: err,
+              });
+            });
+        } else {
+          console.log("in else");
+
+          setUserInfo(qData);
+        }
+      })();
+
+      navigate("/home");
+    });
   };
 
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
         // console.log("logout "); // We don’t really do it
-        navigate("/");
+        navigate("/user/login");
       })
       .catch((error) => {
         // An error happened.
@@ -130,9 +146,7 @@ function App(props) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      {userInfo === undefined || userInfo === null ? (
-        <></>
-      ) : (
+      {path != "/user/login" && (
         <>
           <CommuAppBar props={{ drawerWidth, handleDrawerToggle, title }} />
           <CommuDrawer
@@ -158,27 +172,24 @@ function App(props) {
       >
         <Toolbar />
         <Routes>
-          {userInfo === undefined || userInfo === null ? (
-            <Route
-              path="/"
-              element={<UserLogin login={handleLoginWithGoogle} props={{}} />}
-            />
-          ) : (
-            <>
-              <Route path="/" element={<Home />} />
-              <Route path="home" element={<Home />} />
-              <Route
-                path="user"
-                element={<UserProfile logout={handleLogout} user={userInfo} />}
-              />
-              <Route path="user/register" element={<UserRegister />} />
-              <Route path="user/edit" element={<UserEdit />} />
-              <Route path="topics" element={<CreateTopic user={userInfo} />} />
-              <Route path="topics/:id" element={<Topic />} />
-              <Route path="topics/:id/edit" element={<TopicEdit />} />
-              <Route path="topics/all" element={<Topics />} />
-            </>
-          )}
+          <Route
+            path="/user/login"
+            element={<UserLogin login={handleLoginWithGoogle} props={{}} />}
+          />
+
+          <Route path="/" element={<Home />} />
+          <Route path="home" element={<Home />} />
+          <Route
+            path="user"
+            element={<UserProfile logout={handleLogout} user={userInfo} />}
+          />
+
+          {/* <Route path="user/register" element={<UserRegister />} /> */}
+          <Route path="user/edit" element={<UserEdit />} />
+          <Route path="topics" element={<CreateTopic user={userInfo} />} />
+          <Route path="topics/:id" element={<Topic />} />
+          <Route path="topics/:id/edit" element={<TopicEdit />} />
+          <Route path="topics/all" element={<Topics />} />
 
           <Route path="*" element={<PageNotFound />} />
         </Routes>
