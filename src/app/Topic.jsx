@@ -3,9 +3,18 @@ import * as React from "react";
 import { Box, Button } from "@material-ui/core";
 import { makeStyles } from "@mui/styles";
 import TextField from "@mui/material/TextField";
-import { Avatar, Grid, Paper } from "@material-ui/core";
+import { Grid, Paper } from "@material-ui/core";
 import { Typography } from "@mui/material";
-import { getDoc, collection, doc, deleteDoc } from "firebase/firestore";
+import {
+  getDoc,
+  collection,
+  doc,
+  deleteDoc,
+  addDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "./firebase_config";
 import Swal from "sweetalert2";
 
@@ -15,28 +24,7 @@ import { useNavigate } from "react-router";
 
 import axios from "axios";
 import Pusher from "pusher-js";
-
-const imgLink =
-  "https://media.discordapp.net/attachments/935973325707030568/977873476377526272/user.png";
-
-// const userComment = [
-//   {
-//     id: 1,
-//     user: "Phoom",
-//     imgPath: imgLink,
-//     timestm: "3",
-//     CommentDetail:
-//       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean luctus ut est sed faucibus. Duis bibendum ac ex vehicula laoreet. Suspendisse congue vulputate lobortis. Pellentesque at interdum tortor. Quisque arcu quam, malesuada vel mauris et, posuere sagittis ipsum. Aliquam ultricies a ligula nec faucibus. In elit metus, efficitur lobortis nisi quis, molestie porttitor metus. Pellentesque et neque risus. Aliquam vulputate, mauris vitae tincidunt interdum, mauris mi vehicula urna, nec feugiat quam lectus vitae ex.",
-//   },
-//   {
-//     id: 2,
-//     user: "Phoom",
-//     imgPath: imgLink,
-//     timestm: "20",
-//     CommentDetail:
-//       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean luctus ut est sed faucibus. Duis bibendum ac ex vehicula laoreet. Suspendisse congue vulputate lobortis.",
-//   },
-// ];
+import Avatar from "react-avatar";
 
 const useStyles = makeStyles({
   row: {
@@ -85,10 +73,13 @@ export default function Topic(props) {
   const [loading, setLoading] = React.useState(false);
 
   const classes = useStyles();
+
+  const commentCollection = collection(db, "/comment");
   const topicCollection = collection(db, "/topics");
   const targetDoc = doc(topicCollection, id);
   const [values, setValues] = React.useState({});
 
+  const [idData, setIdData] = React.useState("");
   const [topicState, setTopicState] = React.useState({});
   const [userComment, setUserComment] = React.useState({});
 
@@ -102,40 +93,37 @@ export default function Topic(props) {
   };
 
   const handleSubmit = (e) => {
-    const payload = {
-      username: props.user.displayName,
-      message: values,
-    };
+    const output = values;
 
-    axios({
-      method: "POST",
-      url: "https://commu-core.kiattiphoompoon.repl.co/api/ping",
-      data: payload,
-    });
+    output["displayName"] = props.user.displayName;
+    output["avatar"] = props.user.avatar || props.user.photoURL;
+    output["topicId"] = idData;
+
+    setValues(values);
+
+    addDoc(commentCollection, values)
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err,
+        });
+      });
+
+    // const payload = {
+    //   username: props.user.displayName,
+    //   message: values,
+    // };
+
+    // axios({
+    //   method: "POST",
+    //   url: "https://commu-core.kiattiphoompoon.repl.co/api/ping",
+    //   data: payload,
+    // });
   };
-
-  React.useEffect(() => {
-    const pusher = new Pusher({
-      appId: process.env.PUSHER_APP_ID,
-      key: process.env.PUSHER_KEY,
-      secret: process.env.PUSHER_SECRET,
-      cluster: process.env.PUSHER_CLUSTER,
-      useTLS: true,
-    });
-
-    const channel = pusher.subscribe("commu-app-channel");
-
-    channel.bind("commu-app-event", function (data) {
-      const { message } = data;
-      setUserComment((prevState) => [...prevState, { message }]);
-    });
-
-    console.log(userComment);
-
-    return () => {
-      pusher.unsubscribe("commu-app-channel");
-    };
-  }, []);
 
   const handleEdit = () => {
     navigate(`edit`);
@@ -174,6 +162,7 @@ export default function Topic(props) {
 
     await getDoc(targetDoc)
       .then((data) => {
+        setIdData(data.id);
         setTopicState(data.data());
       })
       .catch((err) => {
@@ -183,6 +172,17 @@ export default function Topic(props) {
           text: err,
         });
       });
+
+    const q = query(commentCollection, where("topicId", "==", idData));
+    const querySnapshot = await getDocs(q);
+    let arr = [];
+
+    querySnapshot.forEach((doc) => {
+      arr.push(doc.data());
+    });
+
+    console.log(arr);
+    setUserComment(arr);
   }, []);
 
   if (tp.loading) {
@@ -248,7 +248,12 @@ export default function Topic(props) {
             padding: "20px 40px 5px",
           }}
         >
-          <Avatar alt="userimg" round={true} src={topicState.avatar} />
+          <Avatar
+            alt="userimg"
+            round={true}
+            size={60}
+            src={topicState.avatar}
+          />
           <Typography sx={{ paddingLeft: 2 }}>
             by {topicState.displayName}
           </Typography>
@@ -285,11 +290,14 @@ export default function Topic(props) {
             paddingTop: "10px",
           }}
         >
-          <img
-            alt="usersmallpic"
-            src={imgLink}
-            style={{ height: "60px", paddingTop: "10px" }}
+          <Avatar
+            alt="userimg"
+            style={{ display: "flex" }}
+            size={60}
+            round={true}
+            src={props.user.photoURL || props.user.avatar}
           />
+
           <TextField
             fullWidth
             sx={{ m: 1 }}
@@ -332,23 +340,30 @@ export default function Topic(props) {
         </Box>
         {/* {FIXME PUSHER} */}
         {userComment.map((value) => (
-          <Paper style={{ padding: "40px 20px" }}>
-            <Grid key={value.id} item container wrap="nowrap" spacing={2}>
+          <Paper key={value.displayName} style={{ padding: "40px 20px" }}>
+            <Grid item container wrap="nowrap" spacing={2}>
               <Grid item>
-                <Avatar alt="userimg" src={value.imgPath} />
+                <Avatar
+                  alt="userimg"
+                  size={60}
+                  round={true}
+                  src={value.avatar}
+                />
               </Grid>
               <Grid item xs zeroMinWidth>
                 <h4 style={{ margin: 0, textAlign: "left", fontSize: "20px" }}>
-                  {value.user}
+                  {value.displayName}
                 </h4>
-                <p style={{ textAlign: "left", fontSize: "13px" }}>
-                  {value.CommentDetail}
-                </p>
-                <p
+                <Typography variant="h6">{value.comment}</Typography>
+
+                {/* <p style={{ textAlign: "left", fontSize: "13px" }}>
+                  {value.comment}
+                </p> */}
+                {/* <p
                   style={{ textAlign: "left", color: "gray", fontSize: "12px" }}
                 >
                   posted {value.timestm} minute ago
-                </p>
+                </p> */}
               </Grid>
             </Grid>
           </Paper>

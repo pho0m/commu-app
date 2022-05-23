@@ -78,7 +78,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function TopicEdit() {
+export default function TopicEdit(props) {
   let { id } = useParams();
   let navigate = useNavigate();
 
@@ -320,21 +320,27 @@ export default function TopicEdit() {
               paddingTop: "10px",
             }}
           >
-            <img
-              alt="usersmallpic"
-              src={imgLink}
-              style={{ height: "60px", paddingTop: "10px" }}
+            <Avatar
+              alt="userimg"
+              style={{ display: "flex" }}
+              size={60}
+              round={true}
+              src={props.user.photoURL || props.user.avatar}
             />
             <TextField
               fullWidth
               sx={{ m: 1 }}
+              value={values.comment}
+              onInput={(e) => handleChange(e)}
               id="filled-textarea"
-              label="Multiline Placeholder"
-              placeholder="Placeholder"
+              name="comment"
+              label="Comment Here"
+              placeholder="Yeah ! it's great !!"
               multiline
               variant="filled"
             />
             <Button
+              onClick={handleSubmit}
               className={classes.sendButton}
               style={{ color: "white", backgroundColor: "#92B4EC" }}
               // onClick={this.handleSend}

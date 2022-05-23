@@ -80,7 +80,7 @@ export default function Topics() {
         <Typography variant="h4" component="h2">
           Topics
         </Typography>
-        <Box sx={{ display: "flex" }}>
+        {/* <Box sx={{ display: "flex" }}>
           <TextField
             style={{
               borderRadius: "30px",
@@ -93,7 +93,7 @@ export default function Topics() {
           <IconButton>
             <SearchIcon></SearchIcon>
           </IconButton>
-        </Box>
+        </Box> */}
       </Box>
       <Box sx={{ flexDirection: "row", pt: 3 }}>
         <Grid item xs={12}>

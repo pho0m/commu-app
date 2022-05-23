@@ -64,6 +64,9 @@ function App(props) {
   const userCollection = collection(db, "/users");
 
   React.useEffect(() => {
+    if (userInfo === null || userInfo === undefined || userInfo === "") {
+      navigate("/user/login");
+    }
     auth.onAuthStateChanged((user) => {
       if (user) {
         // User is logged in
@@ -262,36 +265,32 @@ function App(props) {
       >
         <Toolbar />
         <Routes>
-          {userInfo === undefined || userInfo === null || userInfo === "" ? (
-            <Route
-              path="/user/login"
-              element={
-                <UserLogin
-                  loginGoogle={handleLoginWithGoogle}
-                  loginFB={handleLoginWithFacebook}
-                  props={{}}
-                />
-              }
-            />
-          ) : (
-            <>
-              <Route path="/" element={<Home user={userInfo} />} />
-              <Route path="home" element={<Home user={userInfo} />} />
-              <Route
-                path="user"
-                element={<UserProfile logout={handleLogout} user={userInfo} />}
+          <Route
+            path="/user/login"
+            element={
+              <UserLogin
+                loginGoogle={handleLoginWithGoogle}
+                loginFB={handleLoginWithFacebook}
+                props={{}}
               />
-              {/* <Route path="user/register" element={<UserRegister />} /> */}
-              <Route path="user/edit" element={<UserEdit user={userInfo} />} />
-              <Route path="topics" element={<CreateTopic user={userInfo} />} />
-              <Route path="topics/:id" element={<Topic user={userInfo} />} />
-              <Route
-                path="topics/:id/edit"
-                element={<TopicEdit user={userInfo} />}
-              />
-              <Route path="topics/all" element={<Topics user={userInfo} />} />
-            </>
-          )}
+            }
+          />
+
+          <Route path="/" element={<Home user={userInfo} />} />
+          <Route path="home" element={<Home user={userInfo} />} />
+          <Route
+            path="user"
+            element={<UserProfile logout={handleLogout} user={userInfo} />}
+          />
+          {/* <Route path="user/register" element={<UserRegister />} /> */}
+          <Route path="user/edit" element={<UserEdit user={userInfo} />} />
+          <Route path="topics" element={<CreateTopic user={userInfo} />} />
+          <Route path="topics/:id" element={<Topic user={userInfo} />} />
+          <Route
+            path="topics/:id/edit"
+            element={<TopicEdit user={userInfo} />}
+          />
+          <Route path="topics/all" element={<Topics user={userInfo} />} />
 
           <Route path="*" element={<PageNotFound />} />
         </Routes>
