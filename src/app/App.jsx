@@ -16,6 +16,7 @@ import Topic from "./Topic";
 import Topics from "./Topics";
 import CreateTopic from "./TopicCreate";
 import "./app.css";
+import TopicEdit from "./TopicEdit";
 
 function App(props) {
   let navigate = useNavigate();
@@ -74,6 +75,8 @@ function App(props) {
 
           <Route path="topics" element={<CreateTopic />} />
           <Route path="topics/:id" element={<Topic />} />
+          <Route path="topics/:id/edit" element={<TopicEdit />} />
+
           <Route path="topics/all" element={<Topics />} />
 
           <Route path="*" element={<PageNotFound />} />

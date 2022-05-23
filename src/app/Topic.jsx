@@ -5,12 +5,13 @@ import { makeStyles } from "@mui/styles";
 import TextField from "@mui/material/TextField";
 import { Avatar, Grid, Paper } from "@material-ui/core";
 import { Typography } from "@mui/material";
-import { getDoc, collection, doc } from "firebase/firestore";
+import { getDoc, collection, doc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebase_config";
 import Swal from "sweetalert2";
 
 import SendIcon from "@mui/icons-material/Send";
 import { useAsync, useLocation } from "react-use";
+import { useNavigate } from "react-router";
 
 const imgLink =
   "https://media.discordapp.net/attachments/935973325707030568/977873476377526272/user.png";
@@ -73,9 +74,10 @@ const useStyles = makeStyles({
 });
 
 export default function Topic() {
+  let navigate = useNavigate();
+
   const location = useLocation();
   const id = location.state.usr;
-  console.log(id);
 
   const [loading, setLoading] = React.useState(false);
 
@@ -84,6 +86,38 @@ export default function Topic() {
   const targetDoc = doc(topicCollection, id);
 
   const [topicState, setTopicState] = React.useState({});
+
+  const handleEdit = () => {
+    navigate(`edit`);
+  };
+
+  const handleDelete = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteDoc(targetDoc)
+          .then(() => {
+            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            navigate("/home");
+          })
+          .catch((err) =>
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err,
+            })
+          );
+      }
+      return;
+    });
+  };
 
   const tp = useAsync(async () => {
     setLoading(true);
@@ -125,6 +159,7 @@ export default function Topic() {
             style={{ alignContent: "right", textAlign: "right" }}
           >
             <Button
+              onClick={handleEdit}
               style={{
                 marginRight: "10px",
                 fontWeight: "600",
@@ -139,6 +174,7 @@ export default function Topic() {
               Edit
             </Button>
             <Button
+              onClick={handleDelete}
               style={{
                 fontWeight: "600",
                 color: "#fff",
@@ -249,7 +285,7 @@ export default function Topic() {
               <Grid item>
                 <Avatar alt="userimg" src={value.imgPath} />
               </Grid>
-              <Grid justifyContent="left" item xs zeroMinWidth>
+              <Grid item xs zeroMinWidth>
                 <h4 style={{ margin: 0, textAlign: "left", fontSize: "20px" }}>
                   {value.user}
                 </h4>

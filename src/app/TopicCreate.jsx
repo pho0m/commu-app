@@ -5,37 +5,19 @@ import { useNavigate } from "react-router";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "./firebase_config";
 import Swal from "sweetalert2";
-import { useState } from "react";
 import { storage } from "./firebase_config";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import PropTypes from "prop-types";
 import LinearProgress from "@mui/material/LinearProgress";
 
 import { v4 } from "uuid";
-
-function LinearProgressWithLabel(props) {
-  return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Box sx={{ width: "100%", mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} />
-      </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2">{`${Math.round(props.value)}%`}</Typography>
-      </Box>
-    </Box>
-  );
-}
-
-LinearProgressWithLabel.propTypes = {
-  value: PropTypes.number.isRequired,
-};
+import { LinearProgressWithLabel } from "../components/ProgressBar";
 
 export default function CreateTopic() {
   const [values, setValues] = React.useState({});
   const [loading, setLoading] = React.useState(false);
-  const [file2upload, setFile2Upload] = useState("");
-  const [fileRef, setfileRef] = useState("");
-  const [progress, setProgress] = useState(0);
+  const [file2upload, setFile2Upload] = React.useState("");
+  const [fileRef, setfileRef] = React.useState("");
+  const [progress, setProgress] = React.useState(0);
 
   const topicCollection = collection(db, "/topics");
   let navigate = useNavigate();
@@ -49,8 +31,6 @@ export default function CreateTopic() {
   };
 
   const handleSubmit = (e) => {
-    console.log(file2upload);
-
     if (file2upload === null || file2upload === "") {
       Swal.fire({
         icon: "error",
@@ -91,7 +71,6 @@ export default function CreateTopic() {
               }
 
               setValues(output);
-              console.log("output: " + values.image);
 
               addDoc(topicCollection, values)
                 .then(() => {
@@ -121,8 +100,6 @@ export default function CreateTopic() {
             );
         }
       );
-
-      console.log(values);
     })();
   };
 
@@ -208,7 +185,7 @@ export default function CreateTopic() {
 
           <Typography>Image</Typography>
           <Box style={{ width: "100%", marginBottom: "3vh", marginTop: "1vh" }}>
-            <h1 className="text-center bg-light text-secondary">Upload File</h1>
+            <Typography>Upload File</Typography>
             <Box sx={{ width: "100%" }}>
               <LinearProgressWithLabel value={progress} />
             </Box>
