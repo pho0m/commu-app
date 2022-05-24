@@ -185,7 +185,7 @@ export default function CreateTopic(props) {
             name="title"
             onInput={(e) => handleChange(e)}
             style={{ width: "100%", marginBottom: "3vh", marginTop: "1vh" }}
-            placeholder="what about your title pho0m"
+            placeholder={"what about your title " + userInfo.displayName}
             variant="outlined"
           />
           <Typography>SubTitle</Typography>
@@ -195,7 +195,7 @@ export default function CreateTopic(props) {
             name="subtitle"
             onInput={(e) => handleChange(e)}
             style={{ width: "100%", marginBottom: "3vh", marginTop: "1vh" }}
-            placeholder="what about your sub title pho0m"
+            placeholder={"what about your sub title " + userInfo.displayName}
             variant="outlined"
           />
           <Typography>Content</Typography>
@@ -205,7 +205,7 @@ export default function CreateTopic(props) {
             name="content"
             onInput={(e) => handleChange(e)}
             style={{ width: "100%", marginBottom: "3vh", marginTop: "1vh" }}
-            placeholder="what are you thinking pho0m"
+            placeholder={"what are you thinking " + userInfo.displayName}
             variant="outlined"
             multiline
             rows={4}
