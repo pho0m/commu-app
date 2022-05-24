@@ -23,20 +23,12 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   signOut,
-  getAuth,
 } from "firebase/auth";
 
-import {
-  getDoc,
-  collection,
-  doc,
-  addDoc,
-  where,
-  getDocs,
-  query,
-} from "firebase/firestore"; //
+import { collection, addDoc, where, getDocs, query } from "firebase/firestore";
 import { db } from "./firebase_config";
 import Swal from "sweetalert2";
+import { useAsyncRetry } from "react-use";
 
 function App(props) {
   let navigate = useNavigate();
@@ -50,19 +42,32 @@ function App(props) {
   const [selectedPath, setSelectedIndex] = React.useState(path);
   const [title, setTitle] = React.useState("Home");
   const [userInfo, setUserInfo] = React.useState();
-  const [id, setID] = React.useState();
+  // const [id, setID] = React.useState();
   const userCollection = collection(db, "/users");
 
-  React.useEffect(() => {
+  const tp = useAsyncRetry(async () => {
     const dataStore = localStorage.getItem("USER_DATA");
     const data = JSON.parse(dataStore);
 
-    if (data === null || data === undefined || data === "") {
+    if (data === undefined || data === null) {
+      localStorage.clear();
+
+      Swal.fire({
+        title: "Please Login first",
+        showClass: {
+          popup: "animate__animated animate__fadeInDown",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp",
+        },
+      });
       navigate("/user/login");
     }
-  }, [userInfo]);
+  }, []);
 
-  // console.log("user info :" + userInfo);
+  if (tp.loading) {
+    return <>Loading</>; //for loading
+  }
 
   const handleLoginWithFacebook = () => {
     const provider = new FacebookAuthProvider();
@@ -73,6 +78,7 @@ function App(props) {
 
       const credential = FacebookAuthProvider.credentialFromResult(result);
       const accessToken = credential.accessToken;
+      console.log(accessToken);
 
       (async () => {
         const q = query(userCollection, where("email", "==", usr.email));
@@ -150,6 +156,7 @@ function App(props) {
             })
             .catch((err) => {
               navigate("/user/login");
+              localStorage.clear();
 
               Swal.fire({
                 icon: "error",
@@ -175,6 +182,8 @@ function App(props) {
         navigate("/user/login");
       })
       .catch((error) => {
+        localStorage.clear();
+
         // An error happened.
         alert(error);
       });
@@ -193,7 +202,7 @@ function App(props) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      {path != "/user/login" && (
+      {path !== "/user/login" && (
         <>
           <CommuAppBar props={{ drawerWidth, handleDrawerToggle, title }} />
           <CommuDrawer

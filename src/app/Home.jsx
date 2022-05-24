@@ -17,7 +17,7 @@ import CardTopics from "../components/CardTopic";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "./firebase_config";
 import Swal from "sweetalert2";
-import { useAsync } from "react-use";
+import { useAsync, useAsyncRetry } from "react-use";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -48,8 +48,13 @@ export default function Home(porps) {
   const [loading, setLoading] = React.useState(false);
   const topicCollection = collection(db, "/topics");
   const [topicsState, setTopicsState] = React.useState([]);
+  const [userInfo, setUserInfo] = React.useState();
 
-  const tp = useAsync(async () => {
+  const tp = useAsyncRetry(async () => {
+    const dataStore = localStorage.getItem("USER_DATA");
+    const data = JSON.parse(dataStore);
+
+    setUserInfo(data);
     setLoading(true);
 
     await getDocs(topicCollection)
@@ -62,10 +67,12 @@ export default function Home(porps) {
         setTopicsState(topics);
       })
       .catch((err) => {
+        localStorage.clear();
+
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: "unauthorized please login first",
+          text: err,
         });
         navigate("/user/login");
       });

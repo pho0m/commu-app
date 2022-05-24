@@ -21,7 +21,11 @@ export default function UserProfile(props) {
     setUserInfo(data);
     setLoading(true);
 
+    console.log(userInfo.avatar);
+
     if (data === undefined || data === null) {
+      localStorage.clear();
+
       Swal.fire({
         icon: "error",
         title: "Oops...",

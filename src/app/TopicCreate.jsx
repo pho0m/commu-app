@@ -2,8 +2,8 @@ import * as React from "react";
 
 import { Box, Typography, TextField, Button } from "@material-ui/core";
 import { useNavigate } from "react-router";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { auth, db } from "./firebase_config";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "./firebase_config";
 import Swal from "sweetalert2";
 import { storage } from "./firebase_config";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -34,6 +34,8 @@ export default function CreateTopic(props) {
     setLoading(true);
 
     if (data === undefined || data === null) {
+      localStorage.clear();
+
       Swal.fire({
         icon: "error",
         title: "Oops...",

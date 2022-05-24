@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "we-are-commu"
-  }
+    "default": "we-are-commu",
+    "production": "we-are-commuu"
+  },
+  "targets": {}
 }
