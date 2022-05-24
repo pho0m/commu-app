@@ -17,7 +17,7 @@ import CardTopics from "../components/CardTopic";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "./firebase_config";
 import Swal from "sweetalert2";
-import { useAsync, useAsyncRetry } from "react-use";
+import { useAsyncRetry } from "react-use";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 

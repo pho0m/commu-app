@@ -19,11 +19,11 @@ import { db } from "./firebase_config";
 import Swal from "sweetalert2";
 
 import SendIcon from "@mui/icons-material/Send";
-import { useAsync, useAsyncRetry, useLocation } from "react-use";
+import { useAsyncRetry, useLocation } from "react-use";
 import { useNavigate } from "react-router";
 
-import axios from "axios";
-import Pusher from "pusher-js";
+// import axios from "axios";
+// import Pusher from "pusher-js";
 import Avatar from "react-avatar";
 
 const useStyles = makeStyles({
@@ -76,7 +76,6 @@ export default function Topic() {
 
   const commentCollection = collection(db, "/comment");
   const topicCollection = collection(db, "/topics");
-  const userCollection = collection(db, "/users");
 
   const targetDoc = doc(topicCollection, id);
   const [values, setValues] = React.useState({});
@@ -85,6 +84,59 @@ export default function Topic() {
   const [topicState, setTopicState] = React.useState({});
   const [userComment, setUserComment] = React.useState({});
   const [userInfo, setUserInfo] = React.useState();
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const q = query(commentCollection, where("topicId", "==", idData));
+
+      const querySnapshot = await getDocs(q);
+
+      let arr = [];
+
+      querySnapshot.forEach((doc) => {
+        arr.push(doc.data());
+      });
+
+      setUserComment(arr);
+    };
+
+    fetchData().catch((err) => {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err,
+      });
+    });
+  }, [userComment]);
+
+  const tp = useAsyncRetry(async () => {
+    setLoading(true);
+    const dataStore = localStorage.getItem("USER_DATA");
+    const data = JSON.parse(dataStore);
+
+    if (data === null || data === undefined || data === "") {
+      navigate("/user/login");
+    } else {
+      setUserInfo(data);
+    }
+
+    await getDoc(targetDoc)
+      .then((data) => {
+        setIdData(data.id);
+        setTopicState(data.data());
+      })
+      .catch((err) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err,
+        });
+      });
+  }, []);
+
+  if (tp.loading) {
+    return <>Loading</>;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -148,59 +200,6 @@ export default function Topic() {
       return;
     });
   };
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      const q = query(commentCollection, where("topicId", "==", idData));
-
-      const querySnapshot = await getDocs(q);
-
-      let arr = [];
-
-      querySnapshot.forEach((doc) => {
-        arr.push(doc.data());
-      });
-
-      setUserComment(arr);
-    };
-
-    fetchData().catch((err) => {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: err,
-      });
-    });
-  }, [userComment]);
-
-  const tp = useAsyncRetry(async () => {
-    setLoading(true);
-    const dataStore = localStorage.getItem("USER_DATA");
-    const data = JSON.parse(dataStore);
-
-    if (data === null || data === undefined || data === "") {
-      navigate("/user/login");
-    } else {
-      setUserInfo(data);
-    }
-
-    await getDoc(targetDoc)
-      .then((data) => {
-        setIdData(data.id);
-        setTopicState(data.data());
-      })
-      .catch((err) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: err,
-        });
-      });
-  }, []);
-
-  if (tp.loading) {
-    return <>Loading</>;
-  }
 
   return (
     <>
