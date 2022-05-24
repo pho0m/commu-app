@@ -1,12 +1,5 @@
 import * as React from "react";
-import {
-  AppBar,
-  Box,
-  IconButton,
-  CssBaseline,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { AppBar, Box, IconButton, CssBaseline, Toolbar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
 export default function CommuAppBar({ props }) {

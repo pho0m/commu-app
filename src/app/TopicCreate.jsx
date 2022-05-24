@@ -12,7 +12,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { v4 } from "uuid";
 import { LinearProgressWithLabel } from "../components/ProgressBar";
 import Avatar from "react-avatar";
-import { useAsync } from "react-use";
+import { useAsyncRetry } from "react-use";
 
 export default function CreateTopic(props) {
   const [values, setValues] = React.useState({});
@@ -20,10 +20,32 @@ export default function CreateTopic(props) {
   const [file2upload, setFile2Upload] = React.useState("");
   const [fileRef, setfileRef] = React.useState("");
   const [progress, setProgress] = React.useState(0);
+  const [userInfo, setUserInfo] = React.useState();
 
   const topicCollection = collection(db, "/topics");
 
   let navigate = useNavigate();
+
+  const tp = useAsyncRetry(async () => {
+    const dataStore = localStorage.getItem("USER_DATA");
+    const data = JSON.parse(dataStore);
+
+    setUserInfo(data);
+    setLoading(true);
+
+    if (data === undefined || data === null) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "unauthorized please login first",
+      });
+      navigate("/user/login");
+    }
+  }, []);
+
+  if (tp.loading) {
+    return <>Loading</>; //for loading
+  }
 
   const handleUploadImage = (files) => {
     const pathname = "/images/";
@@ -73,8 +95,8 @@ export default function CreateTopic(props) {
                 output["image"] = url;
               }
 
-              output["avatar"] = props.user.avatar;
-              output["displayName"] = props.user.displayName;
+              output["avatar"] = userInfo.avatar;
+              output["displayName"] = userInfo.displayName;
 
               setValues(output);
 
@@ -139,7 +161,7 @@ export default function CreateTopic(props) {
             alt="userimg"
             size={100}
             round={true}
-            src={props.user.avatar || props.user.photoURL}
+            src={userInfo.avatar || userInfo.photoURL}
           />
           <Box
             style={{
@@ -148,7 +170,7 @@ export default function CreateTopic(props) {
               paddingLeft: "3vh",
             }}
           >
-            <Typography>{props.user.displayName}</Typography>
+            <Typography>{userInfo.displayName}</Typography>
             <Typography>this is public post</Typography>
           </Box>
         </Box>

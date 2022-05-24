@@ -309,64 +309,6 @@ export default function TopicEdit(props) {
             </Box>
           </Box>
         </Box>
-        <Box style={{ padding: 30 }} className="App">
-          <h3 style={{ fontSize: "23px" }}>Leave us a comment</h3>
-          <Box
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              backgroundColor: "transparent",
-              borderColor: "transparent",
-              paddingTop: "10px",
-            }}
-          >
-            <Avatar
-              alt="userimg"
-              style={{ display: "flex" }}
-              size={60}
-              round={true}
-              src={props.user.photoURL || props.user.avatar}
-            />
-            <TextField
-              fullWidth
-              sx={{ m: 1 }}
-              value={values.comment}
-              onInput={(e) => handleChange(e)}
-              id="filled-textarea"
-              name="comment"
-              label="Comment Here"
-              placeholder="Yeah ! it's great !!"
-              multiline
-              variant="filled"
-            />
-            <Button
-              onClick={handleSubmit}
-              className={classes.sendButton}
-              style={{ color: "white", backgroundColor: "#92B4EC" }}
-              // onClick={this.handleSend}
-            >
-              <SendIcon />
-            </Button>
-          </Box>
-          <Box
-            sx={{
-              width: "auto",
-              height: "auto",
-              // border: "solid 2px ",
-            }}
-          >
-            <Box className={classes.row} style={{ padding: "20px 0 5px" }}>
-              <Box className={classes.column}></Box>
-              <Box className={classes.column} style={{ marginLeft: "20px" }}>
-                <Box
-                  sx={{
-                    maxWidth: "100%",
-                  }}
-                ></Box>
-              </Box>
-            </Box>
-          </Box>
-        </Box>
       </form>
 
       <Box
@@ -374,30 +316,7 @@ export default function TopicEdit(props) {
           width: "auto",
           height: "auto",
         }}
-      >
-        {userComment.map((value) => (
-          <Paper key={value.id} style={{ padding: "40px 20px" }}>
-            <Grid key={value.id} item container wrap="nowrap" spacing={2}>
-              <Grid item>
-                <Avatar alt="userimg" src={value.imgPath} />
-              </Grid>
-              <Grid item xs zeroMinWidth>
-                <h4 style={{ margin: 0, textAlign: "left", fontSize: "20px" }}>
-                  {value.user}
-                </h4>
-                <p style={{ textAlign: "left", fontSize: "13px" }}>
-                  {value.CommentDetail}
-                </p>
-                <p
-                  style={{ textAlign: "left", color: "gray", fontSize: "12px" }}
-                >
-                  posted {value.timestm} minute ago
-                </p>
-              </Grid>
-            </Grid>
-          </Paper>
-        ))}
-      </Box>
+      ></Box>
     </>
   );
 }

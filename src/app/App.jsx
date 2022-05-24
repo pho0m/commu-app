@@ -37,7 +37,6 @@ import {
 } from "firebase/firestore"; //
 import { db } from "./firebase_config";
 import Swal from "sweetalert2";
-import { loadState, saveState } from "../components/LocalStorage";
 
 function App(props) {
   let navigate = useNavigate();
@@ -51,66 +50,19 @@ function App(props) {
   const [selectedPath, setSelectedIndex] = React.useState(path);
   const [title, setTitle] = React.useState("Home");
   const [userInfo, setUserInfo] = React.useState();
-
-  // () => {
-  //   // getting stored value
-  //   const saved = localStorage.getItem("user");
-  //   const initialValue = JSON.parse(saved);
-
-  //   console.log(initialValue);
-  //   return initialValue || "";
-  // };
   const [id, setID] = React.useState();
   const userCollection = collection(db, "/users");
 
   React.useEffect(() => {
-    if (userInfo === null || userInfo === undefined || userInfo === "") {
+    const dataStore = localStorage.getItem("USER_DATA");
+    const data = JSON.parse(dataStore);
+
+    if (data === null || data === undefined || data === "") {
       navigate("/user/login");
     }
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        // User is logged in
-        //console.log("onAuth", user);
-        setUserInfo(user);
-      } else {
-        //  User is not logged in
-        setUserInfo(null);
-      }
-    });
-  }, []);
+  }, [userInfo]);
 
-  // React.useEffect(() => {
-  //   if (userInfo === null || userInfo === undefined || userInfo === "") {
-  //     navigate("/user/login");
-  //   } else {
-  //     auth.onAuthStateChanged((user) => {
-  //       if (user) {
-  //         // User is logged in
-  //         //console.log("onAuth", user);
-
-  //         (async () => {
-  //           const q = query(userCollection, where("email", "==", user.email));
-  //           const querySnapshot = await getDocs(q);
-  //           let arr = [];
-
-  //           querySnapshot.forEach((doc) => {
-  //             arr.push(doc.data());
-  //           });
-
-  //           let qData = arr[0];
-
-  //           localStorage.setItem("user", JSON.stringify(qData));
-
-  //           setUserInfo(qData);
-  //         })();
-  //       } else {
-  //         //  User is not logged in
-  //         localStorage.setItem("user", null);
-  //         setUserInfo(null);
-  //       }
-  //     });
-  //   }
-  // }, []);
+  // console.log("user info :" + userInfo);
 
   const handleLoginWithFacebook = () => {
     const provider = new FacebookAuthProvider();
@@ -119,12 +71,9 @@ function App(props) {
     signInWithPopup(auth, provider).then((result) => {
       let usr = result.user;
 
-      console.log("signInWithPopup");
-
       const credential = FacebookAuthProvider.credentialFromResult(result);
       const accessToken = credential.accessToken;
 
-      console.log(accessToken);
       (async () => {
         const q = query(userCollection, where("email", "==", usr.email));
         const querySnapshot = await getDocs(q);
@@ -144,7 +93,10 @@ function App(props) {
           };
 
           addDoc(userCollection, userData)
-            .then(() => {})
+            .then(() => {
+              localStorage.setItem("USER_DATA", JSON.stringify(qData));
+              setUserInfo(qData);
+            })
             .catch((err) => {
               navigate("/user/login");
 
@@ -155,6 +107,7 @@ function App(props) {
               });
             });
         } else {
+          localStorage.setItem("USER_DATA", JSON.stringify(qData));
           setUserInfo(qData);
         }
       })();
@@ -170,7 +123,7 @@ function App(props) {
     signInWithPopup(auth, provider).then((result) => {
       let usr = result.user;
 
-      console.log("signInWithPopup");
+      // console.log("signInWithPopup");
 
       (async () => {
         const q = query(userCollection, where("email", "==", usr.email));
@@ -183,8 +136,6 @@ function App(props) {
 
         let qData = arr[0];
 
-        console.log(qData);
-
         if (qData === undefined || qData === null) {
           let userData = {
             displayName: usr.displayName,
@@ -193,7 +144,10 @@ function App(props) {
           };
 
           addDoc(userCollection, userData)
-            .then(() => {})
+            .then(() => {
+              localStorage.setItem("USER_DATA", JSON.stringify(qData));
+              setUserInfo(qData);
+            })
             .catch((err) => {
               navigate("/user/login");
 
@@ -204,8 +158,7 @@ function App(props) {
               });
             });
         } else {
-          console.log("in else");
-
+          localStorage.setItem("USER_DATA", JSON.stringify(qData));
           setUserInfo(qData);
         }
       })();
@@ -217,6 +170,7 @@ function App(props) {
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
+        localStorage.clear();
         // console.log("logout "); // We don’t really do it
         navigate("/user/login");
       })

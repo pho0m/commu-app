@@ -2,20 +2,26 @@ import { Box, Button, Typography } from "@material-ui/core";
 import * as React from "react";
 import Avatar from "react-avatar";
 import { useNavigate } from "react-router";
-import { useAsync } from "react-use";
+import { useAsync, useAsyncRetry } from "react-use";
 import Swal from "sweetalert2";
 
 export default function UserProfile(props) {
   const [loading, setLoading] = React.useState(false);
   let navigate = useNavigate();
+  const [userInfo, setUserInfo] = React.useState();
 
   const handleEdit = () => {
     navigate("/user/edit");
   };
 
-  const tp = useAsync(async () => {
+  const tp = useAsyncRetry(async () => {
+    const dataStore = localStorage.getItem("USER_DATA");
+    const data = JSON.parse(dataStore);
+
+    setUserInfo(data);
     setLoading(true);
-    if (props.user === undefined || props.user === null) {
+
+    if (data === undefined || data === null) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -46,12 +52,12 @@ export default function UserProfile(props) {
           alt="userimg"
           size={150}
           round={true}
-          src={props.user.avatar || props.user.photoURL}
+          src={userInfo.avatar || userInfo.photoURL}
         />
         <br />
 
         <Typography style={{ marginBottom: "1vh" }}>
-          {props.user.displayName}
+          {userInfo.displayName}
         </Typography>
         <Box
           style={{
@@ -61,7 +67,7 @@ export default function UserProfile(props) {
           }}
         ></Box>
         <Typography style={{ marginBottom: "4vh" }}>
-          Email: {props.user.email}
+          Email: {userInfo.email}
         </Typography>
         <Box
           style={{

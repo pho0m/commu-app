@@ -19,7 +19,7 @@ import { db } from "./firebase_config";
 import Swal from "sweetalert2";
 
 import SendIcon from "@mui/icons-material/Send";
-import { useAsync, useLocation } from "react-use";
+import { useAsync, useAsyncRetry, useLocation } from "react-use";
 import { useNavigate } from "react-router";
 
 import axios from "axios";
@@ -64,7 +64,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Topic(props) {
+export default function Topic() {
   let navigate = useNavigate();
 
   const location = useLocation();
@@ -76,12 +76,15 @@ export default function Topic(props) {
 
   const commentCollection = collection(db, "/comment");
   const topicCollection = collection(db, "/topics");
+  const userCollection = collection(db, "/users");
+
   const targetDoc = doc(topicCollection, id);
   const [values, setValues] = React.useState({});
 
   const [idData, setIdData] = React.useState("");
   const [topicState, setTopicState] = React.useState({});
   const [userComment, setUserComment] = React.useState({});
+  const [userInfo, setUserInfo] = React.useState();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -95,8 +98,8 @@ export default function Topic(props) {
   const handleSubmit = (e) => {
     const output = values;
 
-    output["displayName"] = props.user.displayName;
-    output["avatar"] = props.user.avatar || props.user.photoURL;
+    output["displayName"] = userInfo.displayName;
+    output["avatar"] = userInfo.avatar || userInfo.photoURL;
     output["topicId"] = idData;
 
     setValues(values);
@@ -112,17 +115,6 @@ export default function Topic(props) {
           text: err,
         });
       });
-
-    // const payload = {
-    //   username: props.user.displayName,
-    //   message: values,
-    // };
-
-    // axios({
-    //   method: "POST",
-    //   url: "https://commu-core.kiattiphoompoon.repl.co/api/ping",
-    //   data: payload,
-    // });
   };
 
   const handleEdit = () => {
@@ -157,8 +149,40 @@ export default function Topic(props) {
     });
   };
 
-  const tp = useAsync(async () => {
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const q = query(commentCollection, where("topicId", "==", idData));
+
+      const querySnapshot = await getDocs(q);
+
+      let arr = [];
+
+      querySnapshot.forEach((doc) => {
+        arr.push(doc.data());
+      });
+
+      setUserComment(arr);
+    };
+
+    fetchData().catch((err) => {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err,
+      });
+    });
+  }, [userComment]);
+
+  const tp = useAsyncRetry(async () => {
     setLoading(true);
+    const dataStore = localStorage.getItem("USER_DATA");
+    const data = JSON.parse(dataStore);
+
+    if (data === null || data === undefined || data === "") {
+      navigate("/user/login");
+    } else {
+      setUserInfo(data);
+    }
 
     await getDoc(targetDoc)
       .then((data) => {
@@ -172,17 +196,6 @@ export default function Topic(props) {
           text: err,
         });
       });
-
-    const q = query(commentCollection, where("topicId", "==", idData));
-    const querySnapshot = await getDocs(q);
-    let arr = [];
-
-    querySnapshot.forEach((doc) => {
-      arr.push(doc.data());
-    });
-
-    console.log(arr);
-    setUserComment(arr);
   }, []);
 
   if (tp.loading) {
@@ -295,7 +308,7 @@ export default function Topic(props) {
             style={{ display: "flex" }}
             size={60}
             round={true}
-            src={props.user.photoURL || props.user.avatar}
+            src={userInfo.photoURL || userInfo.avatar}
           />
 
           <TextField
@@ -339,15 +352,15 @@ export default function Topic(props) {
           </Box>
         </Box>
         {/* {FIXME PUSHER} */}
-        {userComment.map((value) => (
-          <Paper key={value.displayName} style={{ padding: "40px 20px" }}>
+        {userComment.map((value, index) => (
+          <Paper key={index} style={{ padding: "40px 20px" }}>
             <Grid item container wrap="nowrap" spacing={2}>
               <Grid item>
                 <Avatar
                   alt="userimg"
                   size={60}
                   round={true}
-                  src={value.avatar}
+                  src={value.avatar || value.photoURL}
                 />
               </Grid>
               <Grid item xs zeroMinWidth>

@@ -115,7 +115,7 @@ export default function Home(porps) {
                 sx={{
                   display: "block",
                   width: "100%",
-                  objectFit: "cover",
+                  objectFit: "contain",
                   height: 500,
                 }}
                 src={step.imgPath}
