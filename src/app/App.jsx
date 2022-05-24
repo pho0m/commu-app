@@ -45,7 +45,7 @@ function App(props) {
   // const [id, setID] = React.useState();
   const userCollection = collection(db, "/users");
 
-  const tp = useAsyncRetry(async () => {
+  React.useEffect(() => {
     const dataStore = localStorage.getItem("USER_DATA");
     const data = JSON.parse(dataStore);
 
@@ -63,11 +63,7 @@ function App(props) {
       });
       navigate("/user/login");
     }
-  }, []);
-
-  if (tp.loading) {
-    return <>Loading</>; //for loading
-  }
+  }, [userInfo]);
 
   const handleLoginWithFacebook = () => {
     const provider = new FacebookAuthProvider();
@@ -257,49 +253,6 @@ function App(props) {
 
           <Route path="*" element={<PageNotFound />} />
         </Routes>
-        {/* <Routes>
-          {userInfo === null || userInfo === undefined ? (
-            <>
-              <Route
-                path="/user/login"
-                element={
-                  <UserLogin
-                    loginGoogle={handleLoginWithGoogle}
-                    loginFB={handleLoginWithFacebook}
-                    props={{}}
-                  />
-                }
-              />
-              <Route
-                path="/"
-                element={
-                  <UserLogin
-                    loginGoogle={handleLoginWithGoogle}
-                    loginFB={handleLoginWithFacebook}
-                    props={{}}
-                  />
-                }
-              />
-            </>
-          ) : (
-            <>
-              <Route path="/" element={<Home />} />
-              <Route path="home" element={<Home />} />
-              <Route
-                path="user"
-                element={<UserProfile logout={handleLogout} user={userInfo} />}
-              />
-              <Route path="user/edit" element={<UserEdit />} /> */}
-        {/* <Route path="user/register" element={<UserRegister />} /> */}
-        {/* <Route path="topics" element={<CreateTopic user={userInfo} />} />
-              <Route path="topics/:id" element={<Topic />} />
-              <Route path="topics/:id/edit" element={<TopicEdit />} />
-              <Route path="topics/all" element={<Topics />} />
-            </>
-          )}
-
-          <Route path="*" element={<PageNotFound />} />
-        </Routes> */}
       </Box>
     </Box>
   );
